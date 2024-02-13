@@ -1,0 +1,19 @@
+{
+    "metadata": {
+        "author": "JustaTea",
+        "description": ""
+    },
+    "data": [
+        {
+            "name": "Hemo Translation Group",
+            "author": "JustaTea",
+            "path": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/littlethingbutspecial/plugin.zip",
+            "version": 1,
+            "source": "https://bachngocsach.com.vn/reader",
+            "icon": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/littlethingbutspecial/icon.png",
+            "description": "Đọc truyện trêng trang littlethingbutspecial",
+            "type": "novel",
+            "locale": "vi_VN"
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "metadata": {
+        "name": "Hemo Translation Group",
+        "author": "JustaTea",
+        "version": 1,
+        "source": "https://littlethingbutspecial.wordpress.com",
+        "regexp": "(www.)?littlethingbutspecial.wordpress.com/.*",
+        "description": "Đọc truyện kẻ vô lại nhà bá tước.",
+        "local": "vi-VN",
+        "language": "javascript",
+        "type": "novel"
+    },
+    "script": {
+        "detail": "detail.js",
+        "chap": "chap.js",
+        "toc": "toc.js",
+        "home": "home.js"
+    }
+}
