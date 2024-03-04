@@ -11,7 +11,7 @@ function execute(url, page) {
             link: e.select("a").first().attr("href"),
             cover: e.select("figure.novel-cover img").first().attr("data-src"),
             description: e.select(".novel-stats").last().text(),
-            host: "https://vlognovel.com",
+            host: "https://vlognovelpro.com",
         });
     }
     return Response.success(data, next);

@@ -7,6 +7,6 @@ function execute(url) {
         description: doc.select(".description").text(),
         detail: doc.select(".header-stats span").html(),
         category: doc.select(".categories ul li a").html(),
-        host: "https://vlognovel.com",
+        host: "https://vlognovelpro.com",
     });
 }

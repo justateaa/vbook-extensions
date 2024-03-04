@@ -1,5 +1,5 @@
 function execute() {
-    const doc = Http.get("https://vlognovel.com").html();
+    const doc = Http.get("https://vlognovelpro.com").html();
     const el = doc.select(".dropdown-menu li a");
     const data = [];
     for (var i = 0; i < el.size(); i++) {

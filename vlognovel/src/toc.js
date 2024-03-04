@@ -8,7 +8,7 @@ function execute(url) {
             data.push({
                 name: e.text(),
                 url: e.attr("href"),
-                host: "https://vlognovel.com",
+                host: "https://vlognovelpro.com",
             });
         });
         return Response.success(data.reverse());
