@@ -4,16 +4,16 @@ function execute(key, page) {
 
     var next = doc.select(".pagination").select("li.active + li").text();
 
-    const el = doc.select(".content-tab .commic-hover");
+    const el = doc.select("ul.novel-list li.novel-item");
 
     const data = [];
     for (var i = 0; i < el.size(); i++) {
         var e = el.get(i);
         data.push({
-            name: e.select("h3").first().text(),
+            name: e.select("a").first().attr("title"),
             link: e.select("a").first().attr("href"),
-            cover: e.select(".image-commic-tab img").first().attr("data-src"),
-            description: e.select(".chapter-commic-tab a").first().text(),
+            cover: e.select(".novel-cover img").first().attr("data-src"),
+            description: "",
             host: "https://vlognovelpro.com",
         });
     }

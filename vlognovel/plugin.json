@@ -2,7 +2,7 @@
     "metadata": {
         "name": "Vlognovel",
         "author": "JustaTea",
-        "version": 5,
+        "version": 6,
         "source": "https://vlognovelpro.com",
         "regexp": "https://vlognovelpro.com/[^/]+.html",
         "description": "Vlognovel- Đọc là nghiền",
