@@ -17,9 +17,9 @@
         },
         {
             "name": "Vlognovel",
-            "author": "fusornat",
+            "author": "JustaTea",
             "path": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/vlognovel/plugin.zip",
-            "version": 4,
+            "version": 5,
             "source": "https://vlognovelpro.com",
             "icon": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/vlognovel/icon.png",
             "description": "Vlognovel- Đọc là nghiền",

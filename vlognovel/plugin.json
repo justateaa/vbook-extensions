@@ -1,8 +1,8 @@
 {
     "metadata": {
         "name": "Vlognovel",
-        "author": "fusornat",
-        "version": 4,
+        "author": "JustaTea",
+        "version": 5,
         "source": "https://vlognovelpro.com",
         "regexp": "https://vlognovelpro.com/[^/]+.html",
         "description": "Vlognovel- Đọc là nghiền",
