@@ -14,6 +14,17 @@
             "description": "Đọc truyện trêng trang littlethingbutspecial",
             "type": "novel",
             "locale": "vi_VN"
+        },
+        {
+            "name": "Vlognovel",
+            "author": "fusornat",
+            "path": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/vlognovel/plugin.zip",
+            "version": 1,
+            "source": "https://bachngocsach.com.vn/reader",
+            "icon": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/vlognovel/icon.png",
+            "description": "Vlognovel- Đọc là nghiền",
+            "type": "novel",
+            "locale": "vi_VN"
         }
     ]
 }
