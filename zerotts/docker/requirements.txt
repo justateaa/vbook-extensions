@@ -1,0 +1,11 @@
+# gradio KHÔNG có trong requirements của Space (SDK của Space tự cấp 6.27.0).
+# Phải ghim ở đây: bản khác có thể đổi dạng endpoint /gradio_api/call/v2/<api_name>
+# mà extension đang dựa vào.
+gradio==6.27.0
+
+zerotts==0.1.2
+numpy
+soundfile
+scipy
+onnxruntime
+tokenizers

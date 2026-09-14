@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "name": "ZeroTTS",
+    "author": "justateaa",
+    "version": 1,
+    "source": "https://huggingface.co/zeroweight-ai/ZeroTTS",
+    "description": "Nghe truyện bằng ZeroTTS - TTS tiếng Việt, 8 giọng dựng sẵn",
+    "locale": "vi",
+    "regexp": "",
+    "type": "tts",
+    "nsfw": false,
+    "encrypt": false
+  },
+  "script": {
+    "voice": "voice.js",
+    "tts": "tts.js"
+  },
+  "config": {
+    "ZEROTTS_URL": {
+      "title": "Địa chỉ backend ZeroTTS",
+      "subtitle": "Gradio app có api_name=synthesize. Để trống dùng Space công khai (chậm, hay xếp hàng). Tự host thì điền http://IP:7860",
+      "default": "https://hugging-apps-zerotts-vietnamese-demo.hf.space",
+      "mode": "input",
+      "format": "text"
+    },
+    "ZEROTTS_CFG_SCALE": {
+      "title": "CFG scale",
+      "subtitle": "1.0 = tắt. Cao hơn thì bám sát chất giọng gốc nhưng dễ méo. Khoảng 1.0-4.0",
+      "default": "1.0",
+      "mode": "input",
+      "format": "number"
+    },
+    "ZEROTTS_TEMPERATURE": {
+      "title": "Temperature",
+      "subtitle": "Thấp thì đều và an toàn, cao thì giàu biểu cảm nhưng dễ vấp. Khoảng 0.1-1.5",
+      "default": "0.8",
+      "mode": "input",
+      "format": "number"
+    },
+    "preload_size": {
+      "title": "Số câu tải trước",
+      "subtitle": "Mỗi câu là một chuỗi base64 WAV vài trăm KB nằm trong bộ nhớ. Tự host mạnh thì tăng lên",
+      "default": "2",
+      "mode": "input",
+      "format": "number"
+    },
+    "preload_parallel": {
+      "title": "Tải trước song song",
+      "subtitle": "Bật khi tự host. Với Space công khai dễ bị giới hạn tần suất",
+      "default": "false",
+      "mode": "toggle"
+    },
+    "max_length": {
+      "title": "Số ký tự tối đa mỗi lượt",
+      "subtitle": "ZeroTTS trả WAV thô (~94 KB/giây) nên để thấp hơn các engine trả MP3",
+      "default": "120",
+      "mode": "input",
+      "format": "number"
+    },
+    "required_api_key": {
+      "title": "Cần API key",
+      "default": "false",
+      "mode": "toggle"
+    },
+    "support_url": {
+      "title": "Trang hỗ trợ",
+      "default": "https://github.com/zeroweight-ai/ZeroTTS",
+      "mode": "input",
+      "format": "text"
+    }
+  }
+}

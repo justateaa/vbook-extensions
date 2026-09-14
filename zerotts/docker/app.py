@@ -1,0 +1,321 @@
+"""ZeroTTS — Vietnamese zero-shot text-to-speech, ONNX + numpy, no PyTorch.
+
+Mirrors the reference implementation shipped by the authors
+(github.com/zeroweight-ai/ZeroTTS, `webui/engine.py`): Vietnamese number/date
+normalization → punctuation normalization → sentence chunking → one
+`ZeroTTS.synthesize` call per segment → join with short gaps. Sampling defaults
+are the ones the published benchmark numbers were produced with.
+
+The model is an ONNX graph designed for CPU (RTF ~0.5x with 8 threads), so this
+Space runs on cpu-basic — there is no PyTorch/CUDA path to put on a GPU.
+"""
+
+from __future__ import annotations
+
+import os
+import shutil
+import time
+
+import gradio as gr
+import numpy as np
+
+from zerotts import ZeroTTS
+from zerotts.audio import concat_with_silence
+from zerotts.chunking import (
+    chunk_text,
+    clean_segment_punctuation,
+    normalize_punctuation,
+)
+from zerotts.text_norm import normalize_vi_text
+
+MODEL_ID = "zeroweight-ai/ZeroTTS"
+MAX_TEXT_CHARS = 1000
+
+# cpu-basic is 2 vCPU. os.cpu_count() reports the host's cores, not the
+# cgroup limit, so asking for more intra-op threads than that only adds
+# contention — measured slower than 2 on the live Space.
+N_THREADS = int(os.environ.get("ZEROTTS_THREADS", "2"))
+
+print(f"Loading {MODEL_ID} (onnxruntime, {N_THREADS} threads)…", flush=True)
+_t0 = time.perf_counter()
+tts = ZeroTTS.from_pretrained(MODEL_ID, intra_op_num_threads=N_THREADS)
+SAMPLE_RATE = int(tts.sample_rate)
+print(f"Loaded in {time.perf_counter() - _t0:.1f}s — voices: {tts.list_voices()}", flush=True)
+
+# ── voices ───────────────────────────────────────────────────────────────────
+# The weights ship eight preset voices. A "voice" here is a small array of
+# speaker latents; cloning from arbitrary audio is NOT part of this release
+# (the voice encoder is unpublished), so the picker is the whole story.
+
+PREVIEW_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "voice_previews")
+os.makedirs(PREVIEW_DIR, exist_ok=True)
+
+VOICES: dict[str, dict] = {}
+for _name in tts.list_voices():
+    _v = tts.load_voice(_name)
+    _preview = None
+    if _v.preview_path and os.path.isfile(_v.preview_path):
+        # Copy out of the HF cache so Gradio can serve it without allowed_paths.
+        _preview = os.path.join(PREVIEW_DIR, f"{_name}.wav")
+        if not os.path.isfile(_preview):
+            shutil.copyfile(_v.preview_path, _preview)
+    VOICES[_name] = {
+        "label": f"{_v.display_name or _name} — {', '.join(_v.tags)}",
+        "display_name": _v.display_name or _name,
+        "tags": list(_v.tags),
+        "preview": _preview,
+    }
+
+VOICE_CHOICES = [(v["label"], k) for k, v in VOICES.items()]
+DEFAULT_VOICE = "maichi" if "maichi" in VOICES else next(iter(VOICES))
+
+DEFAULT_TEXT = "Xin chào tất cả mọi người. Giọng nói này được tạo ra bởi ZeroTTS."
+
+
+def voice_preview(voice: str) -> str | None:
+    """Path to the shipped preview clip for a voice, or None.
+
+    Args:
+        voice: voice pack id, e.g. "maichi".
+    """
+    return VOICES.get(voice, {}).get("preview")
+
+
+def _segments(text: str, max_chunk_sec: float, normalize_numbers: bool) -> list[str]:
+    """Exactly the segments that will be sent to the model."""
+    if normalize_numbers:
+        text = normalize_vi_text(text)
+    raw = chunk_text(normalize_punctuation(text), max_chunk_sec=float(max_chunk_sec))
+    return [s for s in (clean_segment_punctuation(x) for x in raw) if s]
+
+
+def synthesize(
+    text: str,
+    voice: str = DEFAULT_VOICE,
+    cfg_scale: float = 1.0,
+    temperature: float = 0.8,
+    top_k: int = 25,
+    top_p: float = 0.95,
+    repetition_penalty: float = 1.2,
+    eoa_extra_frames: int = 1,
+    normalize_numbers: bool = True,
+    max_chunk_sec: float = 15.0,
+    progress=gr.Progress(),
+) -> tuple[tuple[int, np.ndarray], str]:
+    """Synthesize Vietnamese speech from text with one of the shipped voices.
+
+    Args:
+        text: Vietnamese text to read aloud (English words may be mixed in).
+        voice: voice pack id — one of maichi, baotrang, hamy, kimoanh, giahuy,
+            huuduc, quangminh, tiendat.
+        cfg_scale: classifier-free guidance toward the voice identity. 1.0 is
+            off (one forward pass per frame); above 1.0 costs ~2x.
+        temperature: audio-token sampling temperature.
+        top_k: audio-token top-k.
+        top_p: audio-token nucleus threshold.
+        repetition_penalty: per-codebook repetition penalty. 1.2 is the
+            benchmarked default; 1.0 measurably raises WER.
+        eoa_extra_frames: frames of audio kept past the model's stop signal.
+        normalize_numbers: expand Vietnamese dates, times, numbers and acronyms
+            to spoken words before synthesis.
+        max_chunk_sec: target length of each synthesized segment, in seconds.
+
+    Returns:
+        The generated 48 kHz audio, and a one-line report of what was run.
+    """
+    text = (text or "").strip()
+    if not text:
+        raise gr.Error("Please enter some Vietnamese text to synthesize.")
+    if len(text) > MAX_TEXT_CHARS:
+        raise gr.Error(
+            f"Text is too long ({len(text)} characters, max {MAX_TEXT_CHARS} on this demo)."
+        )
+    if voice not in VOICES:
+        voice = DEFAULT_VOICE
+
+    segments = _segments(text, max_chunk_sec, normalize_numbers)
+    if not segments:
+        raise gr.Error("Nothing left to synthesize after text normalization.")
+
+    t0 = time.perf_counter()
+    chunks = []
+    for i, segment in enumerate(segments):
+        progress((i, len(segments)), desc=f"Segment {i + 1}/{len(segments)}")
+        chunks.append(
+            tts.synthesize(
+                segment,
+                voice=voice,
+                cfg_scale=float(cfg_scale),
+                audio_temperature=float(temperature),
+                audio_topk=int(top_k),
+                audio_topp=float(top_p),
+                audio_repetition_penalty=float(repetition_penalty),
+                eoa_extra_frames=int(eoa_extra_frames),
+            )
+        )
+    progress((len(segments), len(segments)), desc="Decoding")
+
+    audio = concat_with_silence(chunks, silence_sec=0.15, sample_rate=SAMPLE_RATE)
+    audio = np.asarray(audio, dtype=np.float32).reshape(-1)
+    elapsed = time.perf_counter() - t0
+    seconds = audio.shape[0] / SAMPLE_RATE
+
+    report = (
+        f"{VOICES[voice]['display_name']} · {len(segments)} segment(s) · "
+        f"{seconds:.1f}s of audio in {elapsed:.1f}s "
+        f"(RTF {elapsed / max(seconds, 1e-6):.2f}x on {N_THREADS} CPU threads)"
+    )
+    pcm = np.clip(audio * 32767.0, -32768, 32767).astype(np.int16)
+    return (SAMPLE_RATE, pcm), report
+
+
+# Texts are the authors' own web-UI samples (webui/test_samples.txt in the
+# ZeroTTS repo, MIT) — plain Vietnamese, code-switched English, numbers/dates,
+# narration and a news read.
+EXAMPLES = [
+    ["Xin chào các bạn, mình là ZeroTTS.", "maichi"],
+    ["Chào bạn! Hôm nay bạn khỏe không?", "hamy"],
+    ["Chào John, anh khỏe không? Long time no see!", "tiendat"],
+    [
+        "Giảm giá 25% — nhưng chỉ khi bạn đặt 3/4 số lượng trước 17:00 hôm nay. "
+        'Đây là chương trình "mua một tặng một" (có giới hạn), 100% thật, '
+        "không phát sinh chi phí.",
+        "quangminh",
+    ],
+    [
+        "Anh Peter nói giảm 25% cho đơn hàng trên 3/4 triệu, xong deadline là "
+        '5:00 p.m. hôm nay — deal này "hot" lắm đó, check it out ở link '
+        "facebook.com/peter_shop nhé!",
+        "giahuy",
+    ],
+    [
+        "Ngày xưa, ở một ngôi làng nhỏ ven sông, có một ông lão đánh cá sống một "
+        "mình trong túp lều tranh. Mỗi sáng, khi sương còn giăng kín mặt nước, "
+        "ông lại chèo thuyền ra khơi, thả lưới rồi kiên nhẫn chờ đợi.",
+        "huuduc",
+    ],
+    [
+        "Theo thông báo của OpenAI, từ tuần tới, người dùng miễn phí và gói Go có "
+        "thể trò chuyện văn bản thoải mái với ChatGPT. Tuy nhiên, việc tạo hình "
+        "ảnh, tải lên tệp và sử dụng công cụ giọng nói trong chatbot vẫn sẽ bị "
+        "hạn chế.",
+        "baotrang",
+    ],
+]
+
+CSS = """
+#col-container { max-width: 1100px; margin: 0 auto; }
+.dark .gradio-container { color: var(--body-text-color); }
+"""
+
+# Gradio 6 moved theme/css off the Blocks constructor and onto launch().
+with gr.Blocks(title="ZeroTTS — Vietnamese TTS") as demo:
+    with gr.Column(elem_id="col-container"):
+        gr.Markdown(
+            """
+# ZeroTTS — Vietnamese text-to-speech
+
+A 202M-parameter ONNX model that reads Vietnamese (and the English words that
+show up inside it) with 1.03% WER — about 4x fewer word errors than the next
+open Vietnamese system — and runs faster than real time on a plain CPU.
+
+[Model](https://huggingface.co/zeroweight-ai/ZeroTTS) ·
+[GitHub](https://github.com/zeroweight-ai/ZeroTTS) ·
+[Benchmark](https://huggingface.co/datasets/zeroweight-ai/ZeroBench-TTS) ·
+[Blog](https://zeroweight.ai/blog/zero-tts)
+"""
+        )
+
+        with gr.Row():
+            with gr.Column(scale=3):
+                text = gr.Textbox(
+                    label="Text",
+                    value=DEFAULT_TEXT,
+                    lines=6,
+                    max_lines=16,
+                    placeholder="Nhập văn bản tiếng Việt…",
+                    info=f"Vietnamese, up to {MAX_TEXT_CHARS} characters. "
+                    "Dates, times and numbers are read correctly as written.",
+                )
+                run = gr.Button("Generate speech", variant="primary")
+            with gr.Column(scale=2):
+                voice = gr.Dropdown(
+                    choices=VOICE_CHOICES,
+                    value=DEFAULT_VOICE,
+                    label="Voice",
+                    info="Eight preset voices ship with the weights.",
+                )
+                preview = gr.Audio(
+                    label="Voice preview",
+                    value=voice_preview(DEFAULT_VOICE),
+                    interactive=False,
+                )
+
+        audio_out = gr.Audio(label="Output", type="numpy", autoplay=False)
+        status = gr.Textbox(label="Run details", interactive=False, lines=1)
+
+        with gr.Accordion("Advanced settings", open=False):
+            with gr.Row():
+                cfg_scale = gr.Slider(
+                    1.0, 4.0, value=1.0, step=0.1,
+                    label="CFG scale (voice guidance)",
+                    info="1.0 = off. Above 1.0 pushes harder toward the voice "
+                         "identity at roughly 2x the cost per frame.",
+                )
+                temperature = gr.Slider(0.1, 1.5, value=0.8, step=0.05, label="Temperature")
+            with gr.Row():
+                top_k = gr.Slider(1, 200, value=25, step=1, label="Top-k")
+                top_p = gr.Slider(0.1, 1.0, value=0.95, step=0.01, label="Top-p")
+            with gr.Row():
+                repetition_penalty = gr.Slider(
+                    1.0, 2.0, value=1.2, step=0.05, label="Repetition penalty",
+                    info="1.2 is the benchmarked default; 1.0 raises WER.",
+                )
+                eoa_extra_frames = gr.Slider(
+                    0, 4, value=1, step=1, label="Tail frames after stop",
+                    info="Frames kept past the stop signal (0.08s each).",
+                )
+            with gr.Row():
+                normalize_numbers = gr.Checkbox(
+                    value=True, label="Expand Vietnamese numbers, dates and acronyms",
+                )
+                max_chunk_sec = gr.Slider(
+                    5, 25, value=15, step=1, label="Max segment length (seconds)",
+                )
+
+        INPUTS = [
+            text, voice, cfg_scale, temperature, top_k, top_p,
+            repetition_penalty, eoa_extra_frames, normalize_numbers, max_chunk_sec,
+        ]
+
+        gr.Examples(
+            examples=EXAMPLES,
+            inputs=[text, voice],
+            outputs=[audio_out, status],
+            fn=synthesize,
+            cache_examples=True,
+            cache_mode="lazy",
+            label="Examples (from the ZeroTTS repo's own sample texts)",
+        )
+
+        gr.Markdown(
+            "Voice cloning from your own reference audio is **not** part of this "
+            "release — the voice encoder is unpublished, so the eight preset "
+            "voices above are the only speakers available. "
+            "Please disclose synthetic speech as synthetic."
+        )
+
+    voice.change(fn=voice_preview, inputs=voice, outputs=preview, api_name="voice_preview")
+    gr.on(
+        triggers=[run.click, text.submit],
+        fn=synthesize,
+        inputs=INPUTS,
+        outputs=[audio_out, status],
+        api_name="synthesize",
+        concurrency_limit=1,
+    )
+
+if __name__ == "__main__":
+    demo.queue(default_concurrency_limit=1).launch(
+        theme=gr.themes.Citrus(), css=CSS, mcp_server=True
+    )

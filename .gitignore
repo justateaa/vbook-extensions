@@ -1,0 +1,9 @@
+# google-tts là extension của vBook, không phải của repo này — giữ local thôi.
+google-tts/
+
+# Scratch của test harness.
+zerotts/test/_h.txt
+zerotts/test/_b.bin
+zerotts/test/_req.json
+
+__pycache__/
