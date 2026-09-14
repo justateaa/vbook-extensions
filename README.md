@@ -4,7 +4,7 @@ Extension cho [vBook](https://vbook.app).
 
 ## Thêm repo vào vBook
 
-Trong app: **Tiện ích → Nguồn → Thêm**, dán link này:
+Trong phần quản lý nguồn/extension của app, chọn thêm nguồn từ link rồi dán:
 
 ```
 https://raw.githubusercontent.com/justateaa/vbook-extensions/main/plugin.json

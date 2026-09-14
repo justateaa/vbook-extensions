@@ -64,7 +64,7 @@
     },
     "support_url": {
       "title": "Trang hỗ trợ",
-      "default": "https://github.com/zeroweight-ai/ZeroTTS",
+      "default": "https://github.com/justateaa/vbook-extensions/blob/main/zerotts/README.md",
       "mode": "input",
       "format": "text"
     }
