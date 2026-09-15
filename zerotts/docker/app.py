@@ -36,6 +36,11 @@ MAX_TEXT_CHARS = 1000
 # contention — measured slower than 2 on the live Space.
 N_THREADS = int(os.environ.get("ZEROTTS_THREADS", "2"))
 
+# Số job tổng hợp chạy song song. Bản gốc cố định 1. Sweep cho thấy ONNX của
+# model này không nhanh thêm khi vượt 2 luồng (2 luồng và 4 luồng cùng ~0,85
+# RTF), nên chạy 2 worker 2 luồng dùng lõi tốt hơn 1 worker 4 luồng.
+N_CONCURRENCY = int(os.environ.get("ZEROTTS_CONCURRENCY", "1"))
+
 print(f"Loading {MODEL_ID} (onnxruntime, {N_THREADS} threads)…", flush=True)
 _t0 = time.perf_counter()
 tts = ZeroTTS.from_pretrained(MODEL_ID, intra_op_num_threads=N_THREADS)
@@ -318,10 +323,10 @@ open Vietnamese system — and runs faster than real time on a plain CPU.
         inputs=INPUTS,
         outputs=[audio_out, status],
         api_name="synthesize",
-        concurrency_limit=1,
+        concurrency_limit=N_CONCURRENCY,
     )
 
 if __name__ == "__main__":
-    demo.queue(default_concurrency_limit=1).launch(
+    demo.queue(default_concurrency_limit=N_CONCURRENCY).launch(
         theme=gr.themes.Citrus(), css=CSS, mcp_server=True
     )

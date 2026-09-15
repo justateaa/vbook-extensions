@@ -103,9 +103,36 @@ luồng hơn mức thật sự được cấp chỉ tạo tranh chấp. Đừng 
 Chạy `sh test/sweep.sh "2 3 4 6"` để tự quét trên máy bạn — điểm tối ưu phụ thuộc số
 lõi Docker thật sự được cấp.
 
-Bật **Tải trước song song** gần như vô ích: đo được 2 request song song chỉ nhanh hơn
-tuần tự 12% (13,0 s → 11,4 s), vì `app.py` đặt `default_concurrency_limit=1` và bản
-thân việc tổng hợp đã bão hoà CPU. Cứ để `false`.
+### Thông lượng gộp mới là chỉ số đúng, không phải RTF từng câu
+
+Đây là thứ xoá được khoảng trống giữa các câu.
+
+RTF của một request lẻ là chỉ số sai để tối ưu: chạy nhiều job song song làm **mỗi**
+job chậm đi, nhưng tổng số giây audio sinh ra trên mỗi giây đồng hồ lại tăng. App tải
+trước nhiều câu, nên cái nó cần là thông lượng gộp.
+
+`ZEROTTS_CONCURRENCY` (số job song song) × `ZEROTTS_THREADS` (luồng mỗi job), đo bằng
+`test/throughput.sh`:
+
+| worker×luồng | đồng hồ | audio sinh ra | RTF gộp | |
+|--------------|---------|---------------|---------|---|
+| 1×4 | 5,0 s | 5,4 s | 0,93 | gần như hoà vốn |
+| 2×2 | 8,9 s | 11,5 s | 0,77 | |
+| **3×2** | 11,1 s | 17,2 s | **0,65** | ← mặc định |
+| 4×2 | 14,9 s | 22,5 s | 0,66 | không hơn, tốn CPU thừa |
+
+Qua tunnel, 3 request song song: 18,3 s audio trong 10,5 s đồng hồ, RTF gộp **~0,57**,
+0 lỗi qua 4 vòng. Dưới 1,0 nghĩa là hàng đệm lớn dần thay vì cạn.
+
+Vì sao chia nhỏ lại tốt hơn: sweep cho thấy ONNX của model này không nhanh thêm khi
+vượt 2 luồng (2 luồng và 4 luồng cùng ~0,85 RTF). Luồng thứ 3 và 4 gần như phí, nên
+đem số lõi đó chạy job thứ hai và thứ ba thì lời hơn hẳn.
+
+> Tài liệu này trước đây viết "Tải trước song song gần như vô ích, chỉ nhanh hơn 12%".
+> **Sai** — phép đo đó chạy khi `app.py` còn cố định `concurrency_limit=1`, tức Gradio
+> tuần tự hoá mọi thứ, nên song song đương nhiên không giúp gì. Giới hạn đó giờ đọc từ
+> `ZEROTTS_CONCURRENCY`. Phải bật **Tải trước song song** trong app, không thì app chỉ
+> gửi từng câu một và các worker dư ra không dùng tới.
 
 ### Kích thước đoạn quan trọng ngang số luồng
 
@@ -137,8 +164,8 @@ ZeroTTS thẳng trên host thay vì trong container.
 | `ZEROTTS_URL` | Space công khai | Địa chỉ Gradio backend |
 | `ZEROTTS_CFG_SCALE` | `1.0` | 1.0 = tắt; cao hơn bám giọng gốc hơn nhưng dễ méo (1.0–4.0) |
 | `ZEROTTS_TEMPERATURE` | `0.8` | Thấp = đều, cao = giàu biểu cảm nhưng dễ vấp (0.1–1.5) |
-| `preload_size` | `2` | Số câu tổng hợp trước |
-| `preload_parallel` | `false` | Bật khi tự host |
+| `preload_size` | `4` | Số câu tổng hợp trước; để cao hơn số worker cho luôn có việc |
+| `preload_parallel` | `true` | **Phải bật**, không thì 3 worker của backend chỉ dùng được 1 |
 | `max_length` | `120` | Ký tự tối đa mỗi lượt |
 
 ### Timeout: không có gì để chỉnh trong app
