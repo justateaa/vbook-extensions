@@ -4,7 +4,7 @@ Triệu chứng: đọc được một lúc rồi im hẳn. App không báo lỗ
 bỏ qua. **Bấm skip qua đúng đoạn đó thì mọi đoạn sau phát bình thường.**
 
 Cùng extension, cùng backend, cùng chương: **MuMuPlayer phát trọn, điện thoại thật
-thì dừng.** Máy đo: Xiaomi `22071212AG`, Android 15, `com.vbook.android` (PID 32065).
+thì dừng.** (Cả hai đều chạy ZeroTTS; chưa thử google-tts trên máy thật.) Máy đo: Xiaomi `22071212AG`, Android 15, `com.vbook.android` (PID 32065).
 
 ## Phía backend: giao đủ, không lỗi
 
@@ -109,7 +109,30 @@ so với `RELEASING: 15` — tạo gấp đôi số giải phóng, vẫn là rò
 không phải nguyên nhân của việc dừng: nếu cạn codec thì các đoạn **sau** cũng phải
 chết theo, mà thực tế bấm skip một cái là phát tiếp trơn tru.
 
-## So sánh trực tiếp với Google TTS (engine chạy tốt trên chính máy đó)
+## Audio đã bị loại trừ hoàn toàn
+
+Backend được cho trả **đúng byte audio của Google TTS** cho chính dòng đang lỗi
+(`Ầm`, 5952 byte), xác minh trùng khớp từng byte, và xác minh `[OVR]` có bắn cho
+đúng request mang User-Agent Android:
+
+```
+04:49:01  ext=v14  'Ầm'  <<< CLIP GOOGLE   -> vẫn đứng
+```
+
+Cùng một dãy byte. Đi qua extension này thì máy không phát được. **Nội dung file
+audio không phải nguyên nhân.**
+
+Điều còn lại phân biệt được: chỗ đứng luôn ở **cùng một chỉ số đoạn**, bất kể văn
+bản, bất kể byte audio, bất kể độ dài, format hay sample rate. Đó là chữ ký của một
+**bộ đếm**, không phải của nội dung — khớp với con số 30 codec tạo ra so với 15 được
+giải phóng.
+
+## So sánh với Google TTS
+
+> **CHƯA KIỂM CHỨNG.** Chưa từng phát đúng chương này bằng chính extension
+> google-tts trên chính chiếc máy này. Phép A/B đó đang chờ chạy, và nó quyết định
+> toàn bộ phần dưới: nếu google-tts cũng đứng ở cùng đoạn thì đây là lỗi app độc
+> lập với engine, và mọi quy kết về audio bên dưới đều vô nghĩa.
 
 Chạy `execute()` của extension google-tts trên cùng các input rồi giải mã:
 
