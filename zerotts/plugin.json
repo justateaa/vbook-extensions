@@ -2,7 +2,7 @@
   "metadata": {
     "name": "ZeroTTS",
     "author": "justateaa",
-    "version": 8,
+    "version": 9,
     "source": "https://huggingface.co/zeroweight-ai/ZeroTTS",
     "description": "Nghe truyện bằng ZeroTTS - TTS tiếng Việt, 8 giọng dựng sẵn",
     "locale": "vi",

@@ -191,8 +191,13 @@ if (process.env.ZT_LIVE === "1") {
     // Response.error là dừng phát cả chương mà không báo gì.
     const blank = sandbox.execute("   ", "maichi");
     const blankBuf = blank.ok ? Buffer.from(blank.data, "base64") : null;
-    check("dòng rỗng -> khoảng lặng MP3",
-        blank.ok === true && blankBuf.slice(0, 3).toString() === "ID3",
+    // Phải là khung MP3 trần: thẻ ID3 hay header Xing/Info mang metadata gapless,
+    // và đó là thứ khác biệt duy nhất còn lại so với engine chạy được.
+    const blankBare = blank.ok && blankBuf[0] === 0xff && (blankBuf[1] & 0xe0) === 0xe0 &&
+        blankBuf.slice(0, 3).toString() !== "ID3" &&
+        !blankBuf.slice(0, 4096).includes(Buffer.from("Xing")) &&
+        !blankBuf.slice(0, 4096).includes(Buffer.from("Info"));
+    check("dòng rỗng -> khoảng lặng MP3 trần", blankBare === true,
         blank.ok ? blankBuf.length + " bytes" : blank.message);
 
     // Khoảng lặng phải CÙNG sample rate với giọng thật. Lệch thì vBook đọc được

@@ -15,6 +15,8 @@ from __future__ import annotations
 import logging
 import os
 import shutil
+import subprocess
+import tempfile
 import time
 
 import gradio as gr
@@ -39,6 +41,33 @@ for _n in ("uvicorn.access", "uvicorn.error"):
     _lg.setLevel(logging.INFO)
     _lg.addHandler(_ah)
     _lg.propagate = False
+
+# Tự encode MP3 thay vì để Gradio/pydub làm, chỉ để bỏ được metadata gapless.
+#
+# So byte với Google TTS (engine duy nhất chạy thông trên cùng app, cùng chương):
+# Google trả luồng khung MP3 trần — byte đầu ff f3, không ID3, không Xing/LAME,
+# start_time 0. Bản ffmpeg mặc định của ta gắn ID3 + header Info/LAME và khai
+# báo độ trễ encoder 0,023s. Player đọc header LAME để cắt mép gapless sẽ xử lý
+# sai với file rất ngắn, và cơ chế này KHÔNG phụ thuộc độ dài — đúng với việc
+# đệm mọi clip lên 2 giây trước đó không cứu được gì.
+def _encode_mp3_bare(pcm_i16, sample_rate: int) -> str:
+    """PCM 16-bit mono -> MP3 trần: không ID3, không Xing/LAME, không delay."""
+    os.makedirs("/tmp/zerotts_out", exist_ok=True)
+    fd, path = tempfile.mkstemp(suffix=".mp3", dir="/tmp/zerotts_out")
+    os.close(fd)
+    subprocess.run(
+        [
+            "ffmpeg", "-v", "error", "-y",
+            "-f", "s16le", "-ar", str(sample_rate), "-ac", "1", "-i", "pipe:0",
+            "-c:a", "libmp3lame", "-b:a", "64k",
+            "-write_xing", "0", "-id3v2_version", "0", "-map_metadata", "-1",
+            path,
+        ],
+        input=pcm_i16.tobytes(),
+        check=True,
+    )
+    return path
+
 
 MODEL_ID = "zeroweight-ai/ZeroTTS"
 MAX_TEXT_CHARS = 1000
@@ -215,12 +244,13 @@ def synthesize(
         f"(RTF {elapsed / max(seconds, 1e-6):.2f}x on {N_THREADS} CPU threads)"
     )
     pcm = np.clip(audio * 32767.0, -32768, 32767).astype(np.int16)
+    out_path = _encode_mp3_bare(pcm, SAMPLE_RATE)
     print(
         f"[OK  {_req_id}] {seconds:.2f}s audio, dựng mất {elapsed:.2f}s, "
         f"tổng trong hàm {time.time() - _req_t:.2f}s",
         flush=True,
     )
-    return (SAMPLE_RATE, pcm), report
+    return out_path, report
 
 
 # Texts are the authors' own web-UI samples (webui/test_samples.txt in the
@@ -311,7 +341,7 @@ open Vietnamese system — and runs faster than real time on a plain CPU.
         # câu là tắt tiếng, trong khi Google TTS (MP3 ~40 KB) chạy bình thường
         # trên cùng app cùng chương. MP3 nhỏ hơn khoảng 12 lần.
         # Cần ffmpeg trong image thì pydub mới encode được — xem Dockerfile.
-        audio_out = gr.Audio(label="Output", type="numpy", autoplay=False, format="mp3")
+        audio_out = gr.Audio(label="Output", type="filepath", autoplay=False)
         status = gr.Textbox(label="Run details", interactive=False, lines=1)
 
         with gr.Accordion("Advanced settings", open=False):
