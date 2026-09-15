@@ -145,9 +145,13 @@ for (const line of LINES) {
 
 console.log("\nSố dòng làm execute() trả lỗi : " + hardFail + "/" + LINES.length);
 console.log("Số clip ngắn hơn " + MIN_SEC + "s        : " + tooShort + "/" + LINES.length);
-console.log("\nCả hai phải bằng 0. Trả lỗi thì vBook dừng phát cả chương; clip quá");
-console.log("ngắn thì player nối liền gãy — cùng triệu chứng, hai nguyên nhân khác.");
-if (hardFail || tooShort) process.exitCode = 1;
+console.log("\nSố lỗi phải bằng 0 — vBook gặp lỗi TTS là dừng phát cả chương.");
+console.log("Cột độ dài chỉ để quan sát: v7 từng ép mọi clip dài tối thiểu 2s và");
+console.log("app vẫn dừng y như cũ, nên độ dài clip KHÔNG phải nguyên nhân.");
+// Chỉ lỗi mới làm fail. Ngưỡng độ dài giữ lại để quan sát, KHÔNG còn là điều
+// kiện: giả thuyết "clip ngắn làm gãy player" đã bị bác — v7 chèn im lặng cho
+// mọi clip đủ 2s mà app vẫn dừng y như cũ.
+if (hardFail) process.exitCode = 1;
 for (const f of ["_b.bin", "_req.json"]) {
     try { fs.unlinkSync(path.join(__dirname, f)); } catch (e) {}
 }

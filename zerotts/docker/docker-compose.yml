@@ -9,7 +9,7 @@ services:
     environment:
       ZEROTTS_THREADS: "2"
       ZEROTTS_CONCURRENCY: "3"
-      ZEROTTS_MIN_SEC: "2.0"
+      ZEROTTS_MIN_SEC: "0"
       GRADIO_SERVER_NAME: "0.0.0.0"
       GRADIO_SERVER_PORT: "7860"
       HF_HOME: /data/hf

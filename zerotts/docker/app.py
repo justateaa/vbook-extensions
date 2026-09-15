@@ -113,6 +113,7 @@ def synthesize(
     normalize_numbers: bool = True,
     max_chunk_sec: float = 15.0,
     progress=gr.Progress(),
+    request: gr.Request | None = None,
 ) -> tuple[tuple[int, np.ndarray], str]:
     """Synthesize Vietnamese speech from text with one of the shipped voices.
 
@@ -135,10 +136,27 @@ def synthesize(
     Returns:
         The generated 48 kHz audio, and a one-line report of what was run.
     """
+    _req_t = time.time()
+    _req_id = f"{_req_t:.3f}"
+    # Extension tự khai version qua header. Không có header nghĩa là bản cũ hoặc
+    # một client khác (trình duyệt, curl) — biết ngay ai đang gọi, khỏi phải hỏi.
+    _ext = "?"
+    if request is not None:
+        try:
+            _ext = request.headers.get("x-zerotts-ext", "-")
+        except Exception:
+            _ext = "?"
+    print(
+        f"[REQ {_req_id}] ext=v{_ext} len={len(text or '')} text={text!r}",
+        flush=True,
+    )
+
     text = (text or "").strip()
     if not text:
+        print(f"[ERR {_req_id}] text rỗng", flush=True)
         raise gr.Error("Please enter some Vietnamese text to synthesize.")
     if len(text) > MAX_TEXT_CHARS:
+        print(f"[ERR {_req_id}] quá dài: {len(text)}", flush=True)
         raise gr.Error(
             f"Text is too long ({len(text)} characters, max {MAX_TEXT_CHARS} on this demo)."
         )
@@ -147,6 +165,7 @@ def synthesize(
 
     segments = _segments(text, max_chunk_sec, normalize_numbers)
     if not segments:
+        print(f"[ERR {_req_id}] không còn segment nào sau chuẩn hoá", flush=True)
         raise gr.Error("Nothing left to synthesize after text normalization.")
 
     t0 = time.perf_counter()
@@ -184,6 +203,11 @@ def synthesize(
         f"(RTF {elapsed / max(seconds, 1e-6):.2f}x on {N_THREADS} CPU threads)"
     )
     pcm = np.clip(audio * 32767.0, -32768, 32767).astype(np.int16)
+    print(
+        f"[OK  {_req_id}] {seconds:.2f}s audio, dựng mất {elapsed:.2f}s, "
+        f"tổng trong hàm {time.time() - _req_t:.2f}s",
+        flush=True,
+    )
     return (SAMPLE_RATE, pcm), report
 
 

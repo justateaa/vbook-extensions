@@ -29,6 +29,17 @@ def build_zip(ext: str) -> dict:
     src = ROOT / ext
     meta = json.loads((src / "plugin.json").read_text(encoding="utf-8"))["metadata"]
 
+    # EXT_VERSION nhúng trong tts.js phải khớp metadata.version, không thì backend
+    # log sai bản đang chạy và lại mất một vòng hỏi đi hỏi lại.
+    tts = (src / "src" / "tts.js")
+    if tts.exists():
+        import re as _re
+        m = _re.search(r'const EXT_VERSION = "([^"]+)"', tts.read_text(encoding="utf-8"))
+        if m and m.group(1) != str(meta["version"]):
+            raise SystemExit(
+                f"{ext}: EXT_VERSION={m.group(1)} nhưng plugin.json version={meta['version']}"
+            )
+
     out = src / "plugin.zip"
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for name in PACK_FILES:
