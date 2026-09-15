@@ -59,7 +59,7 @@ def _encode_mp3_bare(pcm_i16, sample_rate: int) -> str:
         [
             "ffmpeg", "-v", "error", "-y",
             "-f", "s16le", "-ar", str(sample_rate), "-ac", "1", "-i", "pipe:0",
-            "-c:a", "libmp3lame", "-b:a", "64k",
+            "-c:a", "libmp3lame", "-b:a", "64k", "-ar", str(MP3_RATE),
             "-write_xing", "0", "-id3v2_version", "0", "-map_metadata", "-1",
             path,
         ],
@@ -88,6 +88,13 @@ N_CONCURRENCY = int(os.environ.get("ZEROTTS_CONCURRENCY", "1"))
 # ba chấm), trong khi clip 1,4s vẫn chạy. Chèn im lặng vào cuối cho đủ ngưỡng
 # là chặn được cả lớp lỗi đó tại một chỗ, thay vì vá theo từng dạng văn bản.
 MIN_CLIP_SEC = float(os.environ.get("ZEROTTS_MIN_SEC", "2.0"))
+
+# Sample rate của MP3 xuất ra. Model chạy 48 kHz, nhưng đây là thứ người dùng
+# nhận. Cùng app cùng chương: MuMuPlayer (decoder phần mềm trên PC) phát qua
+# được đoạn ngắn, điện thoại thật thì dừng — nên vấn đề nằm ở decoder phần cứng
+# của máy. Google TTS chạy thông trên đúng máy đó và nó trả 24 kHz (MPEG-2
+# Layer III); ta trả 48 kHz (MPEG-1). Đó là khác biệt cấu trúc cuối cùng còn lại.
+MP3_RATE = int(os.environ.get("ZEROTTS_MP3_RATE", "24000"))
 
 print(f"Loading {MODEL_ID} (onnxruntime, {N_THREADS} threads)…", flush=True)
 _t0 = time.perf_counter()
