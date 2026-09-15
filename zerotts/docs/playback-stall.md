@@ -53,20 +53,36 @@ Thống kê do chính MediaCodec in ra:
 mãi mãi. Đây là hành vi cần sửa dù nguyên nhân kích hoạt là gì: **player phải bỏ qua
 hoặc báo lỗi, không được quay vòng câm 2,5 phút.**
 
-## Nơi lỗi rơi vào: cụm đoạn chỉ toàn dấu câu
+## Nơi lỗi rơi vào: clip audio rất ngắn
 
-Đếm trên chương thực tế của người dùng, chia nội dung **Theo câu**:
+Đo trên chính chiếc máy đó, lọc theo User-Agent Android, tính cả preload:
 
 ```
-49 đoạn tổng cộng
-21 đoạn (43%) không chứa chữ nào — chỉ dấu câu
+6,64s  'Nếu như chỉ có mỗi Yoo Daon với tôi thôi thì...'   phát bình thường
+1,44s  'Một trong ba trường hợp đấy thôi.'                 phát bình thường
+0,48s  'Ầm'                                                DỪNG Ở ĐÂY
+2,88s  'Một viên gạch suýt chút nữa đã rơi trúng đầu...'   preload, không bao giờ phát
+0,96s  '...Ah, cảm ơn'                                     preload, không bao giờ phát
 ```
 
-Lỗi luôn rơi ngay sau một chuỗi liên tiếp các đoạn loại này. Các đoạn đã tái hiện
-được: `-Ầm!`, `Chính là nó!`, `"Con người...?"`. Bấm skip qua là chạy tiếp bình thường.
+Hai request cuối là hàng tải trước (`preload_size = 2`), không phải đoạn đang phát.
+Trừ ngược ra thì đoạn làm app đứng là **`Ầm` — clip 0,48 giây, ngắn nhất cả phiên**.
+Sau đó app không xin thêm đoạn nào nữa cho tới khi người dùng bấm skip.
 
-Chuyển **Chia nội dung = Theo đoạn** làm đi xa hơn hẳn — khớp với giải thích này, vì
-gộp câu làm giảm mạnh số đoạn rỗng chữ.
+Khớp với một quan sát độc lập từ phiên trước: **dừng ở clip 0,5–1,0 s, clip 1,4 s vẫn
+chạy.**
+
+Các đoạn khác đã tái hiện được: `-Ầm!`, `Chính là nó!`, `"Con người...?"` — đều là
+dòng rất ngắn.
+
+### Đoạn chỉ toàn dấu câu không liên quan
+
+App **đã tự lọc dấu câu trước khi gọi extension** (đúng các luật trong phần cài đặt
+"Thay thế từ"): `-Ầm!` tới backend thành `text='Ầm'`. Đếm trên phiên đo:
+
+```
+10 request từ điện thoại — 0 đoạn nào không có chữ
+```
 
 ## Đã loại trừ: mọi thuộc tính của file audio
 
@@ -78,13 +94,15 @@ Mỗi dòng dưới đây là một lần đo riêng trên đúng chiếc máy �
 | MP3 48 kHz | dừng |
 | MP3 24 kHz, luồng khung trần, khớp Google tới từng byte frame header | dừng |
 | WAV PCM 24 kHz | dừng |
-| Đệm mọi clip lên tối thiểu 2,0 giây | dừng |
+| Đệm mọi clip lên tối thiểu 2,0 giây | **chưa kết luận được — xem ghi chú dưới** |
 | Bỏ thẻ ID3, header Xing/Info, độ trễ encoder | dừng |
 | `execute()` không bao giờ trả `Response.error` | dừng |
-| Khoảng lặng có dither -64 dBFS thay vì zero tuyệt đối | dừng |
+| Khoảng lặng có dither -64 dBFS thay vì zero tuyệt đối | không liên quan — máy không đi vào nhánh này |
 | Ép mỗi response mất tối thiểu 0,8 s (giãn nhịp) | dừng |
 
-Không một thuộc tính nào thay đổi được kết quả.
+Ghi chú về dòng "đệm clip": hai lần thử đều không đáng tin. Lần đầu chạy trước khi
+có header `X-ZeroTTS-Ext`, nên không chứng minh được máy đang chạy đúng bản extension.
+Lần sau chạy lẫn với traffic test cục bộ trên cùng container. **Đang đo lại.**
 
 **Giả thuyết cạn tài nguyên MediaCodec đã bị bác.** Phiên đo có đếm `CreateByType: 30`
 so với `RELEASING: 15` — tạo gấp đôi số giải phóng, vẫn là rò rỉ đáng báo. Nhưng nó
@@ -114,6 +132,6 @@ clip gần câm cho `-` và `…`.
 1. **Player vào vòng lặp thử lại vô hạn thay vì bỏ qua clip hoặc báo lỗi.** Đây là lỗi
    độc lập với engine TTS: dừng câm 2,5 phút mà giao diện không hề báo gì.
 2. **MediaCodec tạo ra nhiều gấp đôi số được giải phóng** (30 vs 15 trong một phiên).
-3. Tái hiện: engine TTS trả clip ngắn cho đoạn chỉ toàn dấu câu, chia nội dung Theo câu,
-   chương dài. Máy thật hỏng, giả lập không hỏng.
+3. Tái hiện: engine TTS trả một clip khoảng 0,5 giây (dòng thoại/tượng thanh rất ngắn),
+   chia nội dung Theo câu. Máy thật hỏng, giả lập không hỏng.
 4. Trích log trong `logcat-evidence.txt` (không chứa nội dung truyện).

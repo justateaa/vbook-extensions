@@ -98,7 +98,13 @@ let tooShort = 0;
 
 // MP3 ở đây là CBR: độ dài ~= số byte dữ liệu * 8 / bitrate, bitrate đọc từ
 // frame header đầu tiên.
-const BITRATES = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+//
+// Có HAI bảng bitrate và phải chọn theo phiên bản MPEG trong header, không phải
+// mặc định MPEG-1. Backend xuất 24 kHz, tức MPEG-2 Layer III, nơi cùng một mã 4
+// bit mang giá trị khác hẳn: mã 0b1001 là 112 kbps ở MPEG-1 nhưng 64 kbps ở
+// MPEG-2. Dùng nhầm bảng thì báo 1,18s cho clip thật ra dài 2,00s.
+const BITRATES_MPEG1 = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+const BITRATES_MPEG2 = [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160];
 function mp3Seconds(buf) {
     let start = 0;
     if (buf.slice(0, 3).toString() === "ID3") {
@@ -107,7 +113,10 @@ function mp3Seconds(buf) {
     }
     for (let j = start; j < buf.length - 4; j++) {
         if (buf[j] !== 0xff || (buf[j + 1] & 0xe0) !== 0xe0) continue;
-        const kbps = BITRATES[(buf[j + 2] >> 4) & 0x0f];
+        // bit 4-3 của byte thứ hai: 0b11 = MPEG-1, còn lại là MPEG-2/2.5.
+        const isMpeg1 = ((buf[j + 1] >> 3) & 0x03) === 0x03;
+        const table = isMpeg1 ? BITRATES_MPEG1 : BITRATES_MPEG2;
+        const kbps = table[(buf[j + 2] >> 4) & 0x0f];
         if (!kbps) continue;
         return (buf.length - start) * 8 / (kbps * 1000);
     }
@@ -146,11 +155,16 @@ for (const line of LINES) {
 console.log("\nSố dòng làm execute() trả lỗi : " + hardFail + "/" + LINES.length);
 console.log("Số clip ngắn hơn " + MIN_SEC + "s        : " + tooShort + "/" + LINES.length);
 console.log("\nSố lỗi phải bằng 0 — vBook gặp lỗi TTS là dừng phát cả chương.");
-console.log("Cột độ dài chỉ để quan sát: v7 từng ép mọi clip dài tối thiểu 2s và");
-console.log("app vẫn dừng y như cũ, nên độ dài clip KHÔNG phải nguyên nhân.");
-// Chỉ lỗi mới làm fail. Ngưỡng độ dài giữ lại để quan sát, KHÔNG còn là điều
-// kiện: giả thuyết "clip ngắn làm gãy player" đã bị bác — v7 chèn im lặng cho
-// mọi clip đủ 2s mà app vẫn dừng y như cũ.
+console.log("Clip ngắn còn lại đều là đoạn không có chữ — app lọc dấu câu trước");
+console.log("khi gọi extension, nên máy thật không bao giờ nhận các clip đó.");
+// Chỉ lỗi mới làm fail; ngưỡng độ dài để quan sát.
+//
+// Hai lần thử trước kết luận "clip ngắn không phải nguyên nhân" đều KHÔNG đáng
+// tin, phát hiện khi đọc lại log theo User-Agent: lần đầu chạy trước khi có
+// header X-ZeroTTS-Ext nên không chứng minh được máy chạy đúng bản extension,
+// lần sau lẫn với chính traffic của file này trên cùng container. Trên phiên đo
+// sạch, máy dừng đúng ở clip 0,48s trong khi clip 1,44s ngay trước đó phát bình
+// thường. Đang đo lại với ZEROTTS_MIN_SEC=2.0.
 if (hardFail) process.exitCode = 1;
 for (const f of ["_b.bin", "_req.json"]) {
     try { fs.unlinkSync(path.join(__dirname, f)); } catch (e) {}

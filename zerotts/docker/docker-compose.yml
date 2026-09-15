@@ -9,7 +9,7 @@ services:
     environment:
       ZEROTTS_THREADS: "2"
       ZEROTTS_CONCURRENCY: "3"
-      ZEROTTS_MIN_SEC: "0"
+      ZEROTTS_MIN_SEC: "2.0"
       ZEROTTS_MP3_RATE: "24000"
       ZEROTTS_FORMAT: "mp3"
       ZEROTTS_MIN_RESPONSE_SEC: "0"
