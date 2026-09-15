@@ -45,11 +45,18 @@ try {
 
 const DEFAULT_VOICE = "maichi";
 const MAX_CHARS = 1000;          // Trần của ô Text trong Gradio app.
-const SUBMIT_TIMEOUT = 30000;
-// SSE giữ kết nối mở suốt thời gian tổng hợp; CPU-basic chậm hơn thời gian thực.
-// App có timeout riêng (mặc định 30s) có thể cắt sớm hơn số này -> xem README.
-const RENDER_TIMEOUT = 300000;
-const DOWNLOAD_TIMEOUT = 60000;
+// Mỗi fetch của vBook là đồng bộ và CHẶN luồng gọi. execute() gọi ba cái liên
+// tiếp, nên tổng timeout chính là khoảng thời gian một luồng của app bị giữ.
+// Đặt rộng tay ở đây không "an toàn" mà ngược lại: app bắn nhiều đoạn cùng lúc,
+// backend xử lý tuần tự, các đoạn sau chờ lâu, và nếu timeout dài thì nhiều
+// luồng bị giữ cùng lúc cho tới khi app đơ.
+//
+// Số đo thật (test/soak.js, test/concurrent.js): submit 0,26-0,86s; tổng hợp
+// 5,4-6,6s tuần tự và tối đa 16,3s khi bị bắn 3 đồng thời; tải file 0,58-0,83s.
+// Các trần dưới đây gấp nhiều lần mức tệ nhất từng đo mà tổng vẫn chỉ 105s.
+const SUBMIT_TIMEOUT = 15000;
+const RENDER_TIMEOUT = 60000;
+const DOWNLOAD_TIMEOUT = 30000;
 
 function execute(text, voiceId) {
     let voice = resolveVoice(voiceId);

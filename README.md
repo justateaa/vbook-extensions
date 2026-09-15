@@ -28,7 +28,7 @@ phải tự host. Thư mục [`zerotts/docker/`](zerotts/docker/) có sẵn `doc
 dựng backend trong một lệnh.
 
 Sau khi cài **bắt buộc** nâng `timeout` trong cài đặt kết nối của extension lên
-`300000`. Mặc định 30 s sẽ cắt giữa chừng. Chi tiết trong [`zerotts/README.md`](zerotts/README.md).
+`60000` (đừng đặt 300000 — timeout dài giữ luồng của app và làm app đơ). Chi tiết trong [`zerotts/README.md`](zerotts/README.md).
 
 ## Build
 
