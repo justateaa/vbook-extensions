@@ -198,13 +198,17 @@ def synthesize(
     # Extension tự khai version qua header. Không có header nghĩa là bản cũ hoặc
     # một client khác (trình duyệt, curl) — biết ngay ai đang gọi, khỏi phải hỏi.
     _ext = "?"
+    _ua = "-"
     if request is not None:
         try:
             _ext = request.headers.get("x-zerotts-ext", "-")
+            # User-Agent phân biệt được máy thật với giả lập, và phân biệt hai
+            # bản cài cùng lúc — đã mất một vòng đo vì tưởng nhầm máy nào gọi.
+            _ua = (request.headers.get("user-agent") or "-")[:60]
         except Exception:
             _ext = "?"
     print(
-        f"[REQ {_req_id}] ext=v{_ext} len={len(text or '')} text={text!r}",
+        f"[REQ {_req_id}] ext=v{_ext} ua={_ua!r} len={len(text or '')} text={text!r}",
         flush=True,
     )
 
