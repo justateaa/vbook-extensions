@@ -80,22 +80,53 @@ mà extension đang dựa vào.
 
 ### Số luồng CPU quyết định có nghe mượt hay không
 
-`ZEROTTS_THREADS` trong `docker-compose.yml`. Đo trên máy thật, cùng một câu:
+`ZEROTTS_THREADS` trong `docker-compose.yml`. RTF = thời gian tổng hợp / độ dài audio;
+trên 1,0 là chậm hơn thời gian thực, hàng đệm sẽ cạn dần và cuối cùng hết tiếng.
 
-| Luồng | RTF engine tự báo | Ý nghĩa |
-|-------|-------------------|---------|
-| 2 (Space công khai) | ~1,8× | Chậm hơn nghe, không bao giờ đuổi kịp |
-| 4 | **1,04×** | Ngang bằng — giữ nhịp được nhưng không tích được đệm |
-| 8 | ~0,5× (theo README ZeroTTS) | Nhanh gấp đôi, tích đệm thật |
+**Nhiều luồng hơn KHÔNG phải nhanh hơn.** Số đo thật bằng `test/sweep.sh`, 3 lần mỗi
+mức, RTF do chính engine báo:
 
-RTF = thời gian tổng hợp / độ dài audio. Trên 1,0 là chậm hơn thời gian thực.
+| Luồng | RTF | |
+|-------|-----|---|
+| 2 | 0,86 / 0,84 / 0,83 | |
+| 3 | 0,87 / 0,85 / 0,77 | |
+| 4 | 0,84 / 0,86 / 0,92 | ← mặc định |
+| 6 | 1,84 / 1,87 / 1,80 | vách dốc |
+| 8 | ~2,9 | chậm gấp 3,5× so với 4 |
 
-Ở 1,04× thì hàng đệm không lớn lên được: `preload_size` có đặt bao nhiêu cũng chỉ giữ
-nguyên mức đang có, hụt một nhịp là vấp. Muốn có đệm thật thì nâng `ZEROTTS_THREADS`
-lên 8 rồi `docker compose up -d`.
+Tối ưu nằm ở **2–4 luồng**, và có vách dốc ngay trên 4. `app.py` đã cảnh báo trước:
+`os.cpu_count()` trả về số lõi của host chứ không phải hạn mức cgroup, nên xin nhiều
+luồng hơn mức thật sự được cấp chỉ tạo tranh chấp. Đừng nâng lên 8.
 
-Bật **Tải trước song song** không giúp gì: `app.py` đặt `default_concurrency_limit=1`
-nên Gradio vẫn xử lý tuần tự. Cứ để `false`.
+Chạy `sh test/sweep.sh "2 3 4 6"` để tự quét trên máy bạn — điểm tối ưu phụ thuộc số
+lõi Docker thật sự được cấp.
+
+Bật **Tải trước song song** gần như vô ích: đo được 2 request song song chỉ nhanh hơn
+tuần tự 12% (13,0 s → 11,4 s), vì `app.py` đặt `default_concurrency_limit=1` và bản
+thân việc tổng hợp đã bão hoà CPU. Cứ để `false`.
+
+### Kích thước đoạn quan trọng ngang số luồng
+
+Mỗi đoạn tốn khoảng **1 giây overhead cố định** (submit + tải file) bất kể dài ngắn.
+Đoạn càng ngắn thì overhead đó chiếm tỷ trọng càng lớn. Đo bằng `test/soak.js`:
+
+| Đoạn | Audio tạo ra | RTF tổng |
+|------|--------------|----------|
+| ~105 ký tự | 6,5 s | 1,11 — cạn đệm |
+| ~320 ký tự | 19,6 s | 0,99 — hoà vốn |
+
+Nhưng nếu app đặt **Chia nội dung = Theo câu** thì mỗi đoạn là một câu, `max_length`
+có nâng cũng không đổi gì. Muốn dùng được lever này phải đổi sang chế độ chia theo
+đoạn văn hoặc theo độ dài.
+
+### Tunnel không phải nút thắt
+
+Đo local (`127.0.0.1`) so với qua tunnel: 1,03 vs 1,11 (đoạn ngắn), 1,00 vs 0,99
+(đoạn dài). Tunnel chỉ tốn ~0,05–0,08 RTF. Nút thắt là chính engine.
+
+Trên Docker Desktop (Linux trong VM) engine chạy khoảng **0,85 RTF**, không phải 0,5×
+như model card ghi. Muốn có biên thật sự thì phải cấp thêm CPU cho Docker, hoặc chạy
+ZeroTTS thẳng trên host thay vì trong container.
 
 ## Cài đặt
 
