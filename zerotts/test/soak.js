@@ -79,7 +79,13 @@ function synth(text, i) {
     const tDl = Date.now() - t2;
 
     const bytes = fs.statSync(out).size;
-    const audioSec = (bytes - 44) / (48000 * 2); // 48 kHz mono 16-bit
+    // Độ dài audio phải lấy từ chuỗi engine tự báo ("6.2s of audio in 6.4s").
+    // Suy từ số byte chỉ đúng với WAV thô; backend giờ phục vụ MP3 nén nên
+    // công thức byte cho ra số vô nghĩa.
+    const detail = String(payload[1] || "");
+    const m = /([0-9.]+)s of audio/.exec(detail);
+    if (!m) return { i, fail: "không đọc được độ dài audio: " + detail.slice(0, 80) };
+    const audioSec = parseFloat(m[1]);
     const totalSec = (Date.now() - t0) / 1000;
 
     return {

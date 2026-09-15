@@ -150,10 +150,16 @@ if (process.env.ZT_LIVE === "1") {
     const dt = ((Date.now() - t0) / 1000).toFixed(1);
     check("execute() live", r.ok === true, r.ok ? "" : r.message);
     if (r.ok) {
-        const wav = Buffer.from(r.data, "base64");
-        check("base64 giải ra WAV",
-            wav.slice(0, 4).toString() === "RIFF" && wav.slice(8, 12).toString() === "WAVE",
-            wav.length + " bytes, " + dt + "s");
+        // Backend phục vụ MP3 (app.py đặt gr.Audio(format="mp3")). Vẫn chấp nhận
+        // WAV để test chạy được với backend chưa đổi, ví dụ HF Space mặc định.
+        const buf = Buffer.from(r.data, "base64");
+        const isMp3 = buf.slice(0, 3).toString() === "ID3" ||
+            (buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0);
+        const isWav = buf.slice(0, 4).toString() === "RIFF" &&
+            buf.slice(8, 12).toString() === "WAVE";
+        check("base64 giải ra audio hợp lệ", isMp3 || isWav,
+            (isMp3 ? "MP3" : isWav ? "WAV" : "KHÔNG NHẬN RA") +
+            ", " + buf.length + " bytes, " + dt + "s");
     }
     const bad = sandbox.execute("   ", "maichi");
     check("văn bản rỗng -> error", bad.ok === false, bad.message);

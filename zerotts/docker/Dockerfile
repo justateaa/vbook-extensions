@@ -1,8 +1,9 @@
 FROM python:3.11-slim
 
-# soundfile cần libsndfile; các gói còn lại đều có wheel sẵn.
+# soundfile cần libsndfile; ffmpeg để pydub encode MP3 (app.py đặt
+# gr.Audio(format="mp3") thay vì WAV thô). Các gói còn lại đều có wheel sẵn.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libsndfile1 \
+    && apt-get install -y --no-install-recommends libsndfile1 ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

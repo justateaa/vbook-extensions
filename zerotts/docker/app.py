@@ -251,7 +251,13 @@ open Vietnamese system — and runs faster than real time on a plain CPU.
                     interactive=False,
                 )
 
-        audio_out = gr.Audio(label="Output", type="numpy", autoplay=False)
+        # format="mp3" là chỗ DUY NHẤT lệch khỏi bản app.py gốc trên HF Space.
+        # Mặc định Gradio phục vụ WAV thô 48 kHz, ~350 KB cho một câu. vBook tải
+        # về rồi giữ dưới dạng chuỗi base64; với payload cỡ đó thì phát được vài
+        # câu là tắt tiếng, trong khi Google TTS (MP3 ~40 KB) chạy bình thường
+        # trên cùng app cùng chương. MP3 nhỏ hơn khoảng 12 lần.
+        # Cần ffmpeg trong image thì pydub mới encode được — xem Dockerfile.
+        audio_out = gr.Audio(label="Output", type="numpy", autoplay=False, format="mp3")
         status = gr.Textbox(label="Run details", interactive=False, lines=1)
 
         with gr.Accordion("Advanced settings", open=False):

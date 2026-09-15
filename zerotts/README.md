@@ -16,7 +16,9 @@ gọi trong `src/tts.js` là 3 chặng:
 2. `GET /gradio_api/call/synthesize/<event_id>` → đọc SSE tới khi `event: complete`, rút URL file
 3. `GET <url file>` → `response.base64()` → trả cho app
 
-Audio ra là WAV 48 kHz, mono, 16-bit.
+Audio ra là MP3. `app.py` trong `docker/` đặt `gr.Audio(format="mp3")`; bản gốc trên
+HF Space phục vụ WAV thô 48 kHz, nặng gấp ~5,4 lần và vBook phát được vài câu là tắt
+tiếng. Xem mục "Vì sao MP3" bên dưới.
 
 ## Backend
 
@@ -163,8 +165,9 @@ nên tổng ba số trên chính là khoảng thời gian một luồng của ap
 Muốn đổi thì sửa thẳng trong `tts.js` rồi `python build.py`.
 
 `max_length` để `120` chứ không phải `200` như Google TTS là có lý do: Google trả MP3
-(~40 KB mỗi đoạn), ZeroTTS trả WAV thô 48 kHz — 120 ký tự đã là ~800 KB WAV, thành chuỗi
-base64 còn phình thêm. Tăng lên thì vừa tốn bộ nhớ vừa dễ chạm trần timeout.
+(~40 KB mỗi đoạn). Với backend trong `docker/` đã đổi sang MP3 thì kích thước tương
+đương, nên con số này không còn gắt như trước. Nhưng nếu app chia **theo câu** thì
+`max_length` chỉ là trần, không phải đích — nâng lên cũng không làm đoạn dài thêm.
 
 ## Giọng
 
@@ -221,4 +224,28 @@ Kết quả đo được, cùng một câu thử:
 | Docker local, 4 luồng | 17/17 pass | 4,2 s |
 | Docker qua tunnel | 17/17 pass | 5,9 s |
 
-Cả ba đều trả WAV `RIFF` 48 kHz mono hợp lệ.
+Cả ba đều trả audio hợp lệ. Backend trong `docker/` trả MP3 (~28-46 KB mỗi câu);
+HF Space mặc định vẫn trả WAV `RIFF` 48 kHz mono (~245 KB cùng câu đó).
+
+## Vì sao MP3, không phải WAV
+
+Triệu chứng: vBook phát được vài câu rồi im hẳn, không báo lỗi, không tạm dừng TTS.
+
+Đo được, theo thứ tự loại trừ:
+
+- Backend phục vụ trọn vẹn mọi lần — 40 đoạn tuần tự và 18 request đồng thời, 0 lỗi,
+  RAM phẳng, tunnel 0 lỗi. Không phải backend.
+- Theo dõi bộ đếm request lúc app im: app vẫn gọi được và backend vẫn trả đủ, nhưng
+  không ra tiếng. Lỗi nằm ở khâu phát, không phải khâu lấy dữ liệu.
+- Đối chứng: **Google TTS đọc cùng chương đó bình thường**. Cùng app, cùng máy, cùng
+  chương — chỉ khác engine. Chương vẫn còn nhiều nội dung phía sau chỗ dừng.
+
+Khác biệt còn lại giữa hai engine là thứ trả về: Google trả MP3 ~40 KB mỗi câu, ZeroTTS
+mặc định trả WAV thô ~245 KB. vBook giữ dữ liệu này dưới dạng chuỗi base64, nên WAV
+chiếm gấp khoảng 12 lần bộ nhớ sau khi tính cả base64 và chuỗi UTF-16.
+
+`format="mp3"` đưa kích thước về đúng tầm Google TTS. Đây là chỗ **duy nhất** `app.py`
+lệch khỏi bản gốc trên HF Space, và cần `ffmpeg` trong image để pydub encode được.
+
+MP3 **không** cải thiện thông lượng: RTF trước 1,09-1,19, sau vẫn 1,17. Nó chỉ tiết
+kiệm ~0,17 s ở khâu tải. Khoảng trống giữa các đoạn là vấn đề khác, chưa giải quyết.
