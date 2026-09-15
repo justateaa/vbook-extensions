@@ -249,3 +249,36 @@ lệch khỏi bản gốc trên HF Space, và cần `ffmpeg` trong image để p
 
 MP3 **không** cải thiện thông lượng: RTF trước 1,09-1,19, sau vẫn 1,17. Nó chỉ tiết
 kiệm ~0,17 s ở khâu tải. Khoảng trống giữa các đoạn là vấn đề khác, chưa giải quyết.
+
+## Dòng không có gì để đọc phải trả khoảng lặng, không phải lỗi
+
+Đây là nguyên nhân làm vBook đọc được vài câu rồi im hẳn.
+
+Truyện dịch đầy những dòng chỉ có dấu câu — dòng ba chấm, dòng ngoặc kép trống, dòng
+chỉ một dấu hỏi. Với những dòng đó ZeroTTS không sinh ra âm nào, và bản đầu của
+`tts.js` trả `Response.error`. vBook gặp lỗi TTS thì **dừng phát cả chương, không hiện
+thông báo nào** — nên triệu chứng là đang đọc bỗng im, app vẫn tưởng mình đang chạy.
+
+Vì thế dừng ở chỗ khác nhau mỗi lần: nó dừng ở dòng "câm" đầu tiên của chương, mà vị
+trí dòng đó thì tuỳ chương.
+
+Đo bằng `test/shortlines.js` — chạy thẳng `execute()` trên 12 dạng dòng ngắn:
+
+| Dạng dòng | Trước | Sau |
+|-----------|-------|-----|
+| có chữ (kể cả một tiếng "Ừ") | OK | OK |
+| chỉ dấu câu (`?`, `…`, `……`) | **lỗi** — backend không sinh audio | khoảng lặng |
+| rỗng sau khi làm sạch (`""`, `()`, `[]`, khoảng trắng) | **lỗi** | khoảng lặng |
+
+7/12 dạng gây lỗi trước khi sửa, 0/12 sau khi sửa.
+
+`SILENT_MP3` trong `tts.js` là clip câm 0,3 giây, MP3 mono 24 kHz, 1676 byte, dựng bằng
+`ffmpeg -f lavfi -i anullsrc`. Nhúng thẳng vào script nên dòng câm không tốn một lượt
+gọi mạng nào.
+
+Nguyên tắc chung: **đừng để một câu hỏng chặn cả chương.** Lỗi mạng thật thì vẫn trả
+`Response.error` để còn biết đường sửa, nhưng "backend chạy xong mà không có âm" thì
+trả khoảng lặng rồi đi tiếp.
+
+Ngưỡng `base64.length` cũng hạ từ 1000 xuống 100: con số cũ viết cho WAV thô, mà MP3
+của một tiếng "Ừ" chỉ 3,7 KB nên suýt bị bắt nhầm là audio rỗng.

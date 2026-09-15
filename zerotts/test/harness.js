@@ -161,8 +161,17 @@ if (process.env.ZT_LIVE === "1") {
             (isMp3 ? "MP3" : isWav ? "WAV" : "KHÔNG NHẬN RA") +
             ", " + buf.length + " bytes, " + dt + "s");
     }
-    const bad = sandbox.execute("   ", "maichi");
-    check("văn bản rỗng -> error", bad.ok === false, bad.message);
+    // Dòng không có gì để đọc phải trả khoảng lặng, KHÔNG phải lỗi: vBook gặp
+    // Response.error là dừng phát cả chương mà không báo gì.
+    const blank = sandbox.execute("   ", "maichi");
+    const blankBuf = blank.ok ? Buffer.from(blank.data, "base64") : null;
+    check("dòng rỗng -> khoảng lặng MP3",
+        blank.ok === true && blankBuf.slice(0, 3).toString() === "ID3",
+        blank.ok ? blankBuf.length + " bytes" : blank.message);
+
+    const punct = sandbox.execute("“……”", "maichi");
+    check("dòng toàn dấu câu -> khoảng lặng",
+        punct.ok === true, punct.ok ? "" : punct.message);
 }
 
 for (const line of results) console.log(line);
