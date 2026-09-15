@@ -232,7 +232,13 @@ def synthesize(
         # trong log này. Trước đây mẩu chỉ-dấu-câu không bao giờ gọi tới đây nên
         # là điểm mù.
         print(f"[SIL {_req_id}] không có gì để đọc -> khoảng lặng", flush=True)
-        pcm = np.zeros(int(SILENCE_SEC * SAMPLE_RATE), dtype=np.int16)
+        # KHÔNG dùng số 0 tuyệt đối. Tầng âm thanh của máy theo dõi riêng luồng
+        # toàn-zero — logcat in thẳng "[audioTrackData][zero] ... mMaxAmplitude 0"
+        # kèm bộ đếm số giây. App đứng hình ngay sau một cụm 4 khoảng lặng liên
+        # tiếp, nên nhiễu ở mức -66 dBFS: máy thấy có tín hiệu, tai không nghe ra.
+        n = int(SILENCE_SEC * SAMPLE_RATE)
+        rng = np.random.default_rng(0)
+        pcm = rng.integers(-16, 17, size=n, endpoint=False).astype(np.int16)
         out_path = _encode_mp3_bare(pcm, SAMPLE_RATE)
         return out_path, "khoảng lặng"
 
