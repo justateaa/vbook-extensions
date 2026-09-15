@@ -108,6 +108,21 @@ OUT_FORMAT = os.environ.get("ZEROTTS_FORMAT", "mp3").lower()
 # Độ dài khoảng lặng trả về cho dòng không có gì để đọc.
 SILENCE_SEC = float(os.environ.get("ZEROTTS_SILENCE_SEC", "0.6"))
 
+# Thời gian tối thiểu một request phải chiếm trước khi trả về.
+#
+# Khoảng lặng dựng gần như tức thì (~0,13s), trong khi tổng hợp giọng thật mất
+# 0,4-7s. Log cho thấy app đứng hình ngay sau một chùm 4 khoảng lặng trả về cách
+# nhau 0,13s — nhanh gấp nhiều lần mọi thứ khác trong luồng. Google TTS chạy
+# thông trên cùng máy và mỗi lượt gọi của nó mất ~1s vì đi qua mạng, nên nó
+# không bao giờ dồn nhanh như vậy. Hãm nhịp để chùm dồn dập biến mất.
+MIN_RESPONSE_SEC = float(os.environ.get("ZEROTTS_MIN_RESPONSE_SEC", "0.8"))
+
+
+def _pace(t0: float) -> None:
+    remain = MIN_RESPONSE_SEC - (time.time() - t0)
+    if remain > 0:
+        time.sleep(remain)
+
 print(f"Loading {MODEL_ID} (onnxruntime, {N_THREADS} threads)…", flush=True)
 _t0 = time.perf_counter()
 tts = ZeroTTS.from_pretrained(MODEL_ID, intra_op_num_threads=N_THREADS)
@@ -240,6 +255,8 @@ def synthesize(
         rng = np.random.default_rng(0)
         pcm = rng.integers(-16, 17, size=n, endpoint=False).astype(np.int16)
         out_path = _encode_mp3_bare(pcm, SAMPLE_RATE)
+        _pace(_req_t)
+        print(f"[SIL {_req_id}] tra ve sau {time.time() - _req_t:.2f}s", flush=True)
         return out_path, "khoảng lặng"
 
     t0 = time.perf_counter()
@@ -278,6 +295,7 @@ def synthesize(
     )
     pcm = np.clip(audio * 32767.0, -32768, 32767).astype(np.int16)
     out_path = _encode_mp3_bare(pcm, SAMPLE_RATE)
+    _pace(_req_t)
     print(
         f"[OK  {_req_id}] {seconds:.2f}s audio, dựng mất {elapsed:.2f}s, "
         f"tổng trong hàm {time.time() - _req_t:.2f}s",
