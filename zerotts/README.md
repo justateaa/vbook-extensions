@@ -139,20 +139,28 @@ ZeroTTS thẳng trên host thay vì trong container.
 | `preload_parallel` | `false` | Bật khi tự host |
 | `max_length` | `120` | Ký tự tối đa mỗi lượt |
 
-### Request timeout: đặt khoảng `60000`
+### Timeout: không có gì để chỉnh trong app
 
-Trong mục cài đặt kết nối của extension. **Đừng đặt 300000** — bản trước của tài liệu
-này khuyên như vậy và đó là lời khuyên sai.
+Bản vBook thực tế **không hiện mục `timeout` nào** — màn cài đặt extension chỉ có đúng
+các key do `plugin.json` khai báo. Hai bản trước của tài liệu này bảo "bắt buộc nâng
+`timeout` lên 300000" rồi "đặt 60000"; **cả hai đều sai**, chúng hướng dẫn chỉnh một
+control không tồn tại.
 
-Mỗi `fetch` của vBook là đồng bộ và chặn luồng gọi, mà `execute()` gọi ba cái liên tiếp.
-Timeout không phải mức "an toàn" để đặt rộng tay: nó chính là khoảng thời gian một luồng
-của app bị giữ khi có sự cố. App tải trước nhiều đoạn cùng lúc trong khi backend xử lý
-tuần tự, nên các đoạn sau vốn đã phải chờ; timeout dài làm nhiều luồng bị giữ cùng lúc
-cho tới khi app đơ.
+`reference/extension-api.md` liệt kê `timeout` là built-in connection setting, nhưng ảnh
+chụp màn hình thật cho thấy không có. Tin ảnh chụp, đừng tin tài liệu.
 
-Mặc định 30 s của app thì hơi sát: đo được 16,3 s khi bị bắn 3 request đồng thời, chưa
-kể tổng hợp lâu hơn nếu backend yếu. `60000` cho biên gấp ~3,7× mức tệ nhất từng đo mà
-vẫn không giữ luồng quá lâu.
+Timeout duy nhất có tác dụng là các hằng số nằm trong `src/tts.js`:
+
+```js
+const SUBMIT_TIMEOUT   = 15000;
+const RENDER_TIMEOUT   = 60000;
+const DOWNLOAD_TIMEOUT = 30000;
+```
+
+Mỗi `fetch` của vBook là đồng bộ và chặn luồng gọi, mà `execute()` gọi ba cái liên tiếp,
+nên tổng ba số trên chính là khoảng thời gian một luồng của app bị giữ khi có sự cố.
+Đặt rộng tay không phải "an toàn": bản đầu để `RENDER_TIMEOUT = 300000` và app bị đơ.
+Muốn đổi thì sửa thẳng trong `tts.js` rồi `python build.py`.
 
 `max_length` để `120` chứ không phải `200` như Google TTS là có lý do: Google trả MP3
 (~40 KB mỗi đoạn), ZeroTTS trả WAV thô 48 kHz — 120 ký tự đã là ~800 KB WAV, thành chuỗi

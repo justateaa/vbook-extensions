@@ -27,8 +27,8 @@ Mặc định trỏ vào một HF Space cộng đồng — dùng thử thì đư
 phải tự host. Thư mục [`zerotts/docker/`](zerotts/docker/) có sẵn `docker compose`
 dựng backend trong một lệnh.
 
-Sau khi cài **bắt buộc** nâng `timeout` trong cài đặt kết nối của extension lên
-`60000` (đừng đặt 300000 — timeout dài giữ luồng của app và làm app đơ). Chi tiết trong [`zerotts/README.md`](zerotts/README.md).
+Bản vBook thực tế không có mục `timeout` nào để chỉnh — các timeout duy nhất có tác
+dụng nằm trong `zerotts/src/tts.js`. Chi tiết trong [`zerotts/README.md`](zerotts/README.md).
 
 ## Build
 
