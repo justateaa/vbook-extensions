@@ -1,29 +1,27 @@
-# Player vBook kẹt vòng lặp — kết luận từ logcat
+# vBook player kẹt vòng lặp vô hạn giữa chương
 
-Triệu chứng: đọc được một lúc rồi im hẳn, app không báo lỗi, không tạm dừng TTS.
-Cùng extension, cùng backend, cùng chương: **MuMuPlayer phát qua bình thường, điện
-thoại thật thì dừng.**
+Triệu chứng: đọc được một lúc rồi im hẳn. App không báo lỗi, không tạm dừng, không
+bỏ qua. **Bấm skip qua đúng đoạn đó thì mọi đoạn sau phát bình thường.**
 
-Máy đo: Xiaomi `22071212AG`, Android 15, `com.vbook.android` (PID 32065).
+Cùng extension, cùng backend, cùng chương: **MuMuPlayer phát trọn, điện thoại thật
+thì dừng.** Máy đo: Xiaomi `22071212AG`, Android 15, `com.vbook.android` (PID 32065).
 
 ## Phía backend: giao đủ, không lỗi
 
-Phiên đo sạch, không có giả lập kết nối:
+Phiên đo sạch, xác minh bằng header `X-ZeroTTS-Ext` và User-Agent của máy thật:
 
 ```
-79 request   tất cả ext=v11   cùng một User-Agent Android 15
-82 file phục vụ, tất cả .wav
 mọi chặng POST / SSE / tải file đều HTTP 200
-0 lỗi
+0 lỗi, 0 timeout, 0 request bị bỏ
 ```
 
-Đoạn làm app dừng được yêu cầu lúc `10:36:58`, backend giao **0,48 s audio**, HTTP 200.
-App còn tải tiếp **4 đoạn nữa** sau đó — đúng bằng `preload_size`, tức hàng tải trước
-vẫn chạy trong khi hàng phát đã chết.
+Đoạn làm app dừng vẫn được giao HTTP 200 như mọi đoạn khác. App còn tải tiếp
+`preload_size` đoạn nữa sau đó — hàng tải trước vẫn chạy trong khi hàng phát đã chết.
+Rồi im lặng hoàn toàn cho tới khi người dùng bấm skip.
 
 ## Phía logcat: vòng lặp thử lại vô hạn
 
-Backend ngừng phục vụ lúc `10:37:12`. Player vẫn quay vòng đều đặn tới `10:39:52`:
+Backend ngừng phục vụ lúc `10:37:12`. Player vẫn quay vòng đều tới `10:39:52`:
 
 ```
 10:39:38.930  reached audio EOS
@@ -51,33 +49,28 @@ Thống kê do chính MediaCodec in ra:
 [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
 ```
 
-**Render 0.** Codec nhận buffer, gặp EOS ngay, không render được gì, rồi flush và thử
-lại — mãi mãi.
+**Render 0.** Codec nhận buffer, gặp EOS ngay, không render được gì, flush, thử lại —
+mãi mãi. Đây là hành vi cần sửa dù nguyên nhân kích hoạt là gì: **player phải bỏ qua
+hoặc báo lỗi, không được quay vòng câm 2,5 phút.**
 
-## Rò rỉ MediaCodec
+## Nơi lỗi rơi vào: cụm đoạn chỉ toàn dấu câu
 
-Đếm trong cùng phiên, chỉ tính PID của app:
+Đếm trên chương thực tế của người dùng, chia nội dung **Theo câu**:
 
 ```
-CreateByType       : 30
-setState RELEASING : 15
-setState UNINITIALIZED : 15
+49 đoạn tổng cộng
+21 đoạn (43%) không chứa chữ nào — chỉ dấu câu
 ```
 
-**Tạo 30, giải phóng 15.** Số hiệu instance decoder trong phiên chạy từ `#118` tới
-`#770`.
+Lỗi luôn rơi ngay sau một chuỗi liên tiếp các đoạn loại này. Các đoạn đã tái hiện
+được: `-Ầm!`, `Chính là nó!`, `"Con người...?"`. Bấm skip qua là chạy tiếp bình thường.
 
-Số codec đồng thời mà một tiến trình được cấp là có hạn và **khác nhau theo thiết bị**.
-Điều đó khớp với mọi quan sát:
+Chuyển **Chia nội dung = Theo đoạn** làm đi xa hơn hẳn — khớp với giải thích này, vì
+gộp câu làm giảm mạnh số đoạn rỗng chữ.
 
-- máy thật dừng, giả lập (codec phần mềm) không dừng
-- dừng sau một **số đoạn** nhất định, nên cùng một chương đọc từ cùng chỗ thì luôn
-  dừng ở cùng một dòng
-- không có thông báo lỗi nào — cạn tài nguyên codec thường hỏng im lặng
+## Đã loại trừ: mọi thuộc tính của file audio
 
-## Không phải lỗi của extension
-
-Đã thử và loại từng cái, mỗi lần đều xác nhận bằng số đo:
+Mỗi dòng dưới đây là một lần đo riêng trên đúng chiếc máy đó:
 
 | Đã thử | Kết quả |
 |--------|---------|
@@ -88,29 +81,39 @@ Số codec đồng thời mà một tiến trình được cấp là có hạn v
 | Đệm mọi clip lên tối thiểu 2,0 giây | dừng |
 | Bỏ thẻ ID3, header Xing/Info, độ trễ encoder | dừng |
 | `execute()` không bao giờ trả `Response.error` | dừng |
+| Khoảng lặng có dither -64 dBFS thay vì zero tuyệt đối | dừng |
+| Ép mỗi response mất tối thiểu 0,8 s (giãn nhịp) | dừng |
 
-Không một thuộc tính nào của file audio thay đổi được kết quả. Extension khớp đúng
-contract trong `extension-api.md`: `type: "tts"`, hai script `voice` + `tts`,
-`execute(text, voiceId)`, trả base64 trong `data`.
+Không một thuộc tính nào thay đổi được kết quả.
 
-## Giảm nhẹ
+**Giả thuyết cạn tài nguyên MediaCodec đã bị bác.** Phiên đo có đếm `CreateByType: 30`
+so với `RELEASING: 15` — tạo gấp đôi số giải phóng, vẫn là rò rỉ đáng báo. Nhưng nó
+không phải nguyên nhân của việc dừng: nếu cạn codec thì các đoạn **sau** cũng phải
+chết theo, mà thực tế bấm skip một cái là phát tiếp trơn tru.
 
-Nếu nguyên nhân là cạn tài nguyên codec thì thứ quyết định là **tổng số clip**, không
-phải nội dung. Ít clip hơn thì đi được xa hơn:
+## So sánh trực tiếp với Google TTS (engine chạy tốt trên chính máy đó)
 
-- **Chia nội dung = Theo đoạn** thay vì Theo câu
-- **Độ dài tối đa** đặt cao (300–500) thay vì 120
+Chạy `execute()` của extension google-tts trên cùng các input rồi giải mã:
 
-Cả hai đều làm mỗi clip dài hơn và tổng số clip ít đi. Người dùng đã tự quan sát được
-là chuyển sang chia theo đoạn thì đi xa hơn hẳn — khớp với cách giải thích này.
+```
+'-'    0,29s  peak=0,00018     '.'    0,82s  peak=0,54467
+'…'    0,29s  peak=0,00018     '...'  1,51s  peak=0,48169
+                               '?'    1,08s  peak=0,47502
+```
 
-Đây là giảm nhẹ, không phải sửa. Chương đủ dài thì vẫn sẽ chạm ngưỡng.
+Google **đọc thành tiếng** các dấu `.` `...` `?` (peak ≈ 0,48 là giọng thật), chỉ trả
+clip gần câm cho `-` và `…`.
 
-## Nên báo cho tác giả vBook
+## Extension khớp đúng contract
 
-Trích xuất log trong `logcat-evidence.txt` (không chứa nội dung truyện). Điểm cần nêu:
+`type: "tts"`, hai script `voice` + `tts`, `execute(text, voiceId)`, trả base64 trong
+`data` qua `Response.success`, không bao giờ trả `Response.error`.
 
-1. Player vào vòng lặp thử lại vô hạn thay vì bỏ qua clip hỏng hoặc báo lỗi
-2. MediaCodec tạo ra nhiều gấp đôi số được giải phóng
-3. Tái hiện được: engine TTS trả clip ngắn, chia nội dung theo câu, chương dài
-4. Máy thật hỏng, giả lập không — hợp với giới hạn codec theo thiết bị
+## Đề nghị với tác giả vBook
+
+1. **Player vào vòng lặp thử lại vô hạn thay vì bỏ qua clip hoặc báo lỗi.** Đây là lỗi
+   độc lập với engine TTS: dừng câm 2,5 phút mà giao diện không hề báo gì.
+2. **MediaCodec tạo ra nhiều gấp đôi số được giải phóng** (30 vs 15 trong một phiên).
+3. Tái hiện: engine TTS trả clip ngắn cho đoạn chỉ toàn dấu câu, chia nội dung Theo câu,
+   chương dài. Máy thật hỏng, giả lập không hỏng.
+4. Trích log trong `logcat-evidence.txt` (không chứa nội dung truyện).

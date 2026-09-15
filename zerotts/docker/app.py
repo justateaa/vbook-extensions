@@ -115,7 +115,10 @@ SILENCE_SEC = float(os.environ.get("ZEROTTS_SILENCE_SEC", "0.6"))
 # nhau 0,13s — nhanh gấp nhiều lần mọi thứ khác trong luồng. Google TTS chạy
 # thông trên cùng máy và mỗi lượt gọi của nó mất ~1s vì đi qua mạng, nên nó
 # không bao giờ dồn nhanh như vậy. Hãm nhịp để chùm dồn dập biến mất.
-MIN_RESPONSE_SEC = float(os.environ.get("ZEROTTS_MIN_RESPONSE_SEC", "0.8"))
+MIN_RESPONSE_SEC = float(os.environ.get("ZEROTTS_MIN_RESPONSE_SEC", "0"))
+
+GOOGLE_SILENCE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   "google_silence.mp3")
 
 
 def _pace(t0: float) -> None:
@@ -251,6 +254,14 @@ def synthesize(
         # toàn-zero — logcat in thẳng "[audioTrackData][zero] ... mMaxAmplitude 0"
         # kèm bộ đếm số giây. App đứng hình ngay sau một cụm 4 khoảng lặng liên
         # tiếp, nên nhiễu ở mức -66 dBFS: máy thấy có tín hiệu, tai không nghe ra.
+        # PHÉP THẾ THẲNG, không phải tinh chỉnh thuộc tính nữa.
+        # Đây đúng là file Google TTS trả về cho ký tự ba chấm — 0,29s, peak
+        # 0,00018 — và Google đọc trọn chương này trên chính chiếc máy đang lỗi.
+        # Cùng byte, cùng nguồn đã chứng minh phát được. Nếu vẫn dừng thì nội
+        # dung file audio dứt khoát không phải nguyên nhân, và mọi biến thể khác
+        # của nó cũng vô ích.
+        return GOOGLE_SILENCE_PATH, "khoảng lặng (clip Google)"
+
         n = int(SILENCE_SEC * SAMPLE_RATE)
         rng = np.random.default_rng(0)
         pcm = rng.integers(-16, 17, size=n, endpoint=False).astype(np.int16)

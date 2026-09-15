@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # app.py giữ nguyên byte-for-byte bản trên HF Space — đó là thứ đã xác minh
 # có api_name="synthesize". Mọi tinh chỉnh đi qua biến môi trường, không vá file.
-COPY app.py .
+COPY app.py google_silence.mp3 ./
 
 ENV HF_HOME=/data/hf \
     GRADIO_SERVER_NAME=0.0.0.0 \
