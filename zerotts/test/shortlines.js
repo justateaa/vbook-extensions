@@ -76,8 +76,43 @@ const LINES = [
     "-",
     "—",
     "1.",
-    "A"
+    "A",
+    // Dấu gạch đầu dòng là cách đánh dấu thoại/tượng thanh rất phổ biến.
+    "-Ầm!",
+    "- Ầm!",
+    "—Ầm!",
+    "– Ầm!",
+    "-Ầm",
+    "!",
+    "!!!",
+    "-",
+    "-…",
+    "Ầm!"
 ];
+
+// Ngưỡng độ dài tối thiểu mỗi clip. Player nối liền của vBook gãy ở clip quá
+// ngắn — đo được nó dừng hẳn tại các clip 0,5-1,0s, clip 1,4s thì vẫn chạy.
+// Backend chèn im lặng cho đủ ZEROTTS_MIN_SEC; đây là chốt để không trôi lại.
+const MIN_SEC = 1.5;
+let tooShort = 0;
+
+// MP3 ở đây là CBR: độ dài ~= số byte dữ liệu * 8 / bitrate, bitrate đọc từ
+// frame header đầu tiên.
+const BITRATES = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+function mp3Seconds(buf) {
+    let start = 0;
+    if (buf.slice(0, 3).toString() === "ID3") {
+        start = 10 + ((buf[6] & 0x7f) << 21 | (buf[7] & 0x7f) << 14 |
+                      (buf[8] & 0x7f) << 7 | (buf[9] & 0x7f));
+    }
+    for (let j = start; j < buf.length - 4; j++) {
+        if (buf[j] !== 0xff || (buf[j + 1] & 0xe0) !== 0xe0) continue;
+        const kbps = BITRATES[(buf[j + 2] >> 4) & 0x0f];
+        if (!kbps) continue;
+        return (buf.length - start) * 8 / (kbps * 1000);
+    }
+    return null;
+}
 
 console.log("execute() trên câu ngắn  ->  " + BASE + "\n");
 console.log("input                    | sau cleanText     | kết quả");
@@ -92,8 +127,12 @@ for (const line of LINES) {
         const buf = Buffer.from(r.data, "base64");
         const isMp3 = buf.slice(0, 3).toString() === "ID3" ||
             (buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0);
-        verdict = "OK  " + buf.length + "B " + (isMp3 ? "MP3" : "WAV") +
-            "  base64=" + r.data.length;
+        const sec = mp3Seconds(buf);
+        const shortClip = sec !== null && sec < MIN_SEC;
+        if (shortClip) tooShort++;
+        verdict = (shortClip ? "NGẮN" : "OK  ") + " " + buf.length + "B " +
+            (isMp3 ? "MP3" : "WAV") + "  " +
+            (sec === null ? "?" : sec.toFixed(1) + "s");
     } else {
         verdict = "ERROR: " + r.message;
         hardFail++;
@@ -104,8 +143,11 @@ for (const line of LINES) {
     );
 }
 
-console.log("\nSố dòng làm execute() trả Response.error: " + hardFail + "/" + LINES.length);
-console.log("Mỗi dòng như vậy là một câu app không nhận được audio.");
+console.log("\nSố dòng làm execute() trả lỗi : " + hardFail + "/" + LINES.length);
+console.log("Số clip ngắn hơn " + MIN_SEC + "s        : " + tooShort + "/" + LINES.length);
+console.log("\nCả hai phải bằng 0. Trả lỗi thì vBook dừng phát cả chương; clip quá");
+console.log("ngắn thì player nối liền gãy — cùng triệu chứng, hai nguyên nhân khác.");
+if (hardFail || tooShort) process.exitCode = 1;
 for (const f of ["_b.bin", "_req.json"]) {
     try { fs.unlinkSync(path.join(__dirname, f)); } catch (e) {}
 }

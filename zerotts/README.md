@@ -309,3 +309,35 @@ trả khoảng lặng rồi đi tiếp.
 
 Ngưỡng `base64.length` cũng hạ từ 1000 xuống 100: con số cũ viết cho WAV thô, mà MP3
 của một tiếng "Ừ" chỉ 3,7 KB nên suýt bị bắt nhầm là audio rỗng.
+
+## Clip quá ngắn làm gãy player — nguyên nhân gốc của cả lớp lỗi "đọc một lúc rồi dừng"
+
+Ba lần dừng ở ba chỗ khác nhau, đều là clip rất ngắn:
+
+| Chỗ dừng | Clip sinh ra | Độ dài |
+|----------|--------------|--------|
+| thoại hai tiếng trong ngoặc kép | 8108 B | ~1,0 s |
+| mẩu câu bị cắt tại dấu ba chấm | ~5036 B | ~0,6 s |
+| dòng tượng thanh có gạch đầu dòng | 4268 B | ~0,5 s |
+
+Câu chạy được ngay trước đó dài 1,4 s. Nên ngưỡng gãy nằm đâu đó trong khoảng
+1,0–1,4 giây. Đổi **Chia nội dung** sang **Theo đoạn** che được phần lớn vì đoạn văn
+thì dài, nhưng một dòng tượng thanh đứng riêng thành đoạn vẫn gãy.
+
+Đây không phải lỗi theo hình dạng văn bản. Mọi cách vá theo từng dạng chữ đều là đuổi
+theo triệu chứng. Chặn tại hai điểm, một lần:
+
+**1. Backend đảm bảo độ dài tối thiểu.** `ZEROTTS_MIN_SEC` (mặc định `2.0`) trong
+`docker-compose.yml`. `app.py` chèn im lặng vào cuối cho đủ ngưỡng trước khi encode.
+Không có dạng văn bản nào sinh ra được clip ngắn hơn thế nữa.
+
+**2. Extension không bao giờ trả `Response.error`.** vBook gặp lỗi TTS là dừng phát cả
+chương mà không hiện thông báo nào, nên một đoạn hỏng giết cả chương. `execute()` giờ
+thử lại một lần, hỏng nữa thì trả khoảng lặng rồi đi tiếp. Mất một câu còn hơn mất cả
+chương; chi tiết lỗi vẫn ghi ra logcat qua `console.log`.
+
+Khoảng lặng nhúng trong `tts.js` cũng dài 2,0 s và cùng 48 kHz mono 64 kbps với clip
+giọng — nó cũng là một clip đi vào hàng phát, nên chịu đúng ràng buộc đó.
+
+`test/shortlines.js` chạy 33 dạng dòng ngắn qua `execute()` thật và bắt buộc **cả hai**
+số phải bằng 0: số dòng trả lỗi, và số clip ngắn hơn 1,5 s. Thoát khác 0 nếu vi phạm.

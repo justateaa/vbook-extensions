@@ -41,6 +41,13 @@ N_THREADS = int(os.environ.get("ZEROTTS_THREADS", "2"))
 # RTF), nên chạy 2 worker 2 luồng dùng lõi tốt hơn 1 worker 4 luồng.
 N_CONCURRENCY = int(os.environ.get("ZEROTTS_CONCURRENCY", "1"))
 
+# Độ dài tối thiểu của mỗi clip trả về, tính bằng giây.
+# Player nối liền của vBook gãy khi gặp clip quá ngắn: đo được nó dừng hẳn ở
+# các clip 0,5-1,0s (dòng tượng thanh, thoại một tiếng, mẩu câu bị cắt tại dấu
+# ba chấm), trong khi clip 1,4s vẫn chạy. Chèn im lặng vào cuối cho đủ ngưỡng
+# là chặn được cả lớp lỗi đó tại một chỗ, thay vì vá theo từng dạng văn bản.
+MIN_CLIP_SEC = float(os.environ.get("ZEROTTS_MIN_SEC", "2.0"))
+
 print(f"Loading {MODEL_ID} (onnxruntime, {N_THREADS} threads)…", flush=True)
 _t0 = time.perf_counter()
 tts = ZeroTTS.from_pretrained(MODEL_ID, intra_op_num_threads=N_THREADS)
@@ -162,6 +169,12 @@ def synthesize(
 
     audio = concat_with_silence(chunks, silence_sec=0.15, sample_rate=SAMPLE_RATE)
     audio = np.asarray(audio, dtype=np.float32).reshape(-1)
+
+    min_samples = int(MIN_CLIP_SEC * SAMPLE_RATE)
+    if 0 < audio.shape[0] < min_samples:
+        audio = np.concatenate(
+            [audio, np.zeros(min_samples - audio.shape[0], dtype=np.float32)]
+        )
     elapsed = time.perf_counter() - t0
     seconds = audio.shape[0] / SAMPLE_RATE
 

@@ -8,7 +8,7 @@
       "name": "zerotts",
       "author": "justateaa",
       "path": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/zerotts/plugin.zip",
-      "version": 6,
+      "version": 7,
       "source": "https://huggingface.co/zeroweight-ai/ZeroTTS",
       "icon": "https://raw.githubusercontent.com/justateaa/vbook-extensions/main/zerotts/icon.png",
       "description": "Nghe truyện bằng ZeroTTS - TTS tiếng Việt, 8 giọng dựng sẵn",
