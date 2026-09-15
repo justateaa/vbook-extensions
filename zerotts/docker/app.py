@@ -12,6 +12,7 @@ Space runs on cpu-basic — there is no PyTorch/CUDA path to put on a GPU.
 
 from __future__ import annotations
 
+import logging
 import os
 import shutil
 import time
@@ -27,6 +28,17 @@ from zerotts.chunking import (
     normalize_punctuation,
 )
 from zerotts.text_norm import normalize_vi_text
+
+# Bật access log của uvicorn: cần nhìn TỪNG request HTTP, kể cả lượt tải file
+# /gradio_api/file=..., để biết app có quay lại lấy audio hay không. Suy từ bộ
+# đếm tổng của tunnel là đoán, không phải đo.
+_ah = logging.StreamHandler()
+_ah.setFormatter(logging.Formatter("[HTTP] %(message)s"))
+for _n in ("uvicorn.access", "uvicorn.error"):
+    _lg = logging.getLogger(_n)
+    _lg.setLevel(logging.INFO)
+    _lg.addHandler(_ah)
+    _lg.propagate = False
 
 MODEL_ID = "zeroweight-ai/ZeroTTS"
 MAX_TEXT_CHARS = 1000
@@ -364,6 +376,38 @@ open Vietnamese system — and runs faster than real time on a plain CPU.
     )
 
 if __name__ == "__main__":
-    demo.queue(default_concurrency_limit=N_CONCURRENCY).launch(
-        theme=gr.themes.Citrus(), css=CSS, mcp_server=True
+    # Mount lên FastAPI của mình thay vì demo.launch(), chỉ để cài được middleware
+    # ghi TỪNG request HTTP — gồm cả lượt tải /gradio_api/file=..., thứ mà log
+    # trong hàm synthesize không thấy. Cần biết app có quay lại lấy audio không.
+    import inspect
+
+    import uvicorn
+    from fastapi import FastAPI
+
+    fastapi_app = FastAPI()
+
+    @fastapi_app.middleware("http")
+    async def _log_http(request, call_next):
+        t0 = time.time()
+        response = await call_next(request)
+        path = request.url.path
+        if len(path) > 70:
+            path = path[:34] + "…" + path[-34:]
+        print(
+            f"[HTTP] {request.method:4} {path} -> {response.status_code} "
+            f"{time.time() - t0:.2f}s",
+            flush=True,
+        )
+        return response
+
+    _queued = demo.queue(default_concurrency_limit=N_CONCURRENCY)
+    _kw = {}
+    if "css" in inspect.signature(gr.mount_gradio_app).parameters:
+        _kw["css"] = CSS
+    mounted = gr.mount_gradio_app(fastapi_app, _queued, path="/", **_kw)
+    uvicorn.run(
+        mounted,
+        host=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"),
+        port=int(os.environ.get("GRADIO_SERVER_PORT", "7860")),
+        log_level="warning",
     )
