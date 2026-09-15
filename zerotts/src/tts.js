@@ -52,7 +52,7 @@ const SILENT_MP3 = "//OExAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 // Phải khớp metadata.version trong plugin.json — build.py kiểm, lệch là dừng.
 // Gửi kèm mỗi request để backend log biết chính xác bản nào đang gọi.
-const EXT_VERSION = "12";
+const EXT_VERSION = "13";
 
 const DEFAULT_VOICE = "maichi";
 const MAX_CHARS = 1000;          // Trần của ô Text trong Gradio app.
@@ -72,14 +72,12 @@ const DOWNLOAD_TIMEOUT = 30000;
 function execute(text, voiceId) {
     let voice = resolveVoice(voiceId);
     let payload = cleanText(text);
-    if (!hasSpeech(payload)) {
-        return Response.success(SILENT_MP3);
-    }
 
-    // KHÔNG BAO GIỜ trả Response.error. vBook gặp lỗi TTS là dừng phát cả chương
-    // mà không hiện thông báo nào, nên một đoạn hỏng sẽ giết cả chương. Thử lại
-    // một lần, hỏng nữa thì trả khoảng lặng rồi đi tiếp câu sau. Mất một câu còn
-    // hơn mất cả chương; chi tiết lỗi vẫn ghi ra logcat qua console.log.
+    // KHÔNG đi tắt cho dòng chỉ có dấu câu nữa. Trước đây những mẩu đó được trả
+    // bằng clip nhúng sẵn mà không gọi backend, nên chúng vô hình trong log
+    // backend — đúng chỗ tôi cần nhìn lại là chỗ không thấy được. Giờ mọi đoạn
+    // đều đi qua backend: mỗi clip người dùng nghe đều sinh từ cùng một đường
+    // ống, và mỗi đoạn đều để lại một dòng log.
     let audio = synthesizeOnce(payload, voice);
     if (!audio) {
         audio = synthesizeOnce(payload, voice);
@@ -242,15 +240,6 @@ function cleanText(text) {
         out = out.substring(0, MAX_CHARS);
     }
     return out;
-}
-
-// Có gì để đọc thành tiếng không: bỏ hết dấu câu, ký hiệu và khoảng trắng,
-// còn lại chữ hoặc số thì mới đáng gọi backend.
-function hasSpeech(s) {
-    if (!s) {
-        return false;
-    }
-    return s.replace(/[\s.,;:!?…"'`~@#$%^&*+=\/\|<>(){}\[\]«»„“”‘’\-–—_]/g, "").length > 0;
 }
 
 function resolveVoice(voiceId) {

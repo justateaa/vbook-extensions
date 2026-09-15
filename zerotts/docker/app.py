@@ -105,6 +105,9 @@ MP3_RATE = int(os.environ.get("ZEROTTS_MP3_RATE", "24000"))
 # được thì lỗi nằm trong đường giải mã MP3 của máy chứ không phải ở file.
 OUT_FORMAT = os.environ.get("ZEROTTS_FORMAT", "mp3").lower()
 
+# Độ dài khoảng lặng trả về cho dòng không có gì để đọc.
+SILENCE_SEC = float(os.environ.get("ZEROTTS_SILENCE_SEC", "0.6"))
+
 print(f"Loading {MODEL_ID} (onnxruntime, {N_THREADS} threads)…", flush=True)
 _t0 = time.perf_counter()
 tts = ZeroTTS.from_pretrained(MODEL_ID, intra_op_num_threads=N_THREADS)
@@ -213,9 +216,6 @@ def synthesize(
     )
 
     text = (text or "").strip()
-    if not text:
-        print(f"[ERR {_req_id}] text rỗng", flush=True)
-        raise gr.Error("Please enter some Vietnamese text to synthesize.")
     if len(text) > MAX_TEXT_CHARS:
         print(f"[ERR {_req_id}] quá dài: {len(text)}", flush=True)
         raise gr.Error(
@@ -224,10 +224,17 @@ def synthesize(
     if voice not in VOICES:
         voice = DEFAULT_VOICE
 
-    segments = _segments(text, max_chunk_sec, normalize_numbers)
+    segments = _segments(text, max_chunk_sec, normalize_numbers) if text else []
     if not segments:
-        print(f"[ERR {_req_id}] không còn segment nào sau chuẩn hoá", flush=True)
-        raise gr.Error("Nothing left to synthesize after text normalization.")
+        # Dòng chỉ có dấu câu, hoặc rỗng. Trả khoảng lặng đi qua ĐÚNG đường ống
+        # encode của giọng, thay vì để extension trả một clip dựng sẵn: mọi clip
+        # người dùng nhận phải giống nhau từng thuộc tính, và mọi đoạn phải hiện
+        # trong log này. Trước đây mẩu chỉ-dấu-câu không bao giờ gọi tới đây nên
+        # là điểm mù.
+        print(f"[SIL {_req_id}] không có gì để đọc -> khoảng lặng", flush=True)
+        pcm = np.zeros(int(SILENCE_SEC * SAMPLE_RATE), dtype=np.int16)
+        out_path = _encode_mp3_bare(pcm, SAMPLE_RATE)
+        return out_path, "khoảng lặng"
 
     t0 = time.perf_counter()
     chunks = []
