@@ -51,21 +51,25 @@ for _n in ("uvicorn.access", "uvicorn.error"):
 # sai với file rất ngắn, và cơ chế này KHÔNG phụ thuộc độ dài — đúng với việc
 # đệm mọi clip lên 2 giây trước đó không cứu được gì.
 def _encode_mp3_bare(pcm_i16, sample_rate: int) -> str:
-    """PCM 16-bit mono -> MP3 trần: không ID3, không Xing/LAME, không delay."""
+    """PCM 16-bit mono -> MP3 trần (không ID3/Xing/LAME/delay) hoặc WAV."""
     os.makedirs("/tmp/zerotts_out", exist_ok=True)
-    fd, path = tempfile.mkstemp(suffix=".mp3", dir="/tmp/zerotts_out")
+    suffix = ".wav" if OUT_FORMAT == "wav" else ".mp3"
+    fd, path = tempfile.mkstemp(suffix=suffix, dir="/tmp/zerotts_out")
     os.close(fd)
-    subprocess.run(
-        [
-            "ffmpeg", "-v", "error", "-y",
-            "-f", "s16le", "-ar", str(sample_rate), "-ac", "1", "-i", "pipe:0",
-            "-c:a", "libmp3lame", "-b:a", "64k", "-ar", str(MP3_RATE),
+    common = [
+        "ffmpeg", "-v", "error", "-y",
+        "-f", "s16le", "-ar", str(sample_rate), "-ac", "1", "-i", "pipe:0",
+        "-ar", str(MP3_RATE),
+    ]
+    if OUT_FORMAT == "wav":
+        args = common + ["-c:a", "pcm_s16le", path]
+    else:
+        args = common + [
+            "-c:a", "libmp3lame", "-b:a", "64k",
             "-write_xing", "0", "-id3v2_version", "0", "-map_metadata", "-1",
             path,
-        ],
-        input=pcm_i16.tobytes(),
-        check=True,
-    )
+        ]
+    subprocess.run(args, input=pcm_i16.tobytes(), check=True)
     return path
 
 
@@ -95,6 +99,11 @@ MIN_CLIP_SEC = float(os.environ.get("ZEROTTS_MIN_SEC", "2.0"))
 # của máy. Google TTS chạy thông trên đúng máy đó và nó trả 24 kHz (MPEG-2
 # Layer III); ta trả 48 kHz (MPEG-1). Đó là khác biệt cấu trúc cuối cùng còn lại.
 MP3_RATE = int(os.environ.get("ZEROTTS_MP3_RATE", "24000"))
+
+# "mp3" hoặc "wav". WAV để đi vòng hẳn decoder phần cứng của máy: MP3 đã khớp
+# Google tới từng byte frame header mà điện thoại vẫn dừng, nên nếu WAV chạy
+# được thì lỗi nằm trong đường giải mã MP3 của máy chứ không phải ở file.
+OUT_FORMAT = os.environ.get("ZEROTTS_FORMAT", "mp3").lower()
 
 print(f"Loading {MODEL_ID} (onnxruntime, {N_THREADS} threads)…", flush=True)
 _t0 = time.perf_counter()

@@ -74,6 +74,23 @@ const MPEG_RATES = {
     0: [11025, 12000, 8000]     // MPEG 2.5
 };
 
+// Nhận cả WAV lẫn MP3: backend đổi định dạng được qua ZEROTTS_FORMAT, mà clip
+// câm nhúng trong extension phải luôn khớp clip giọng.
+function audioSampleRate(buf) {
+    if (buf.slice(0, 4).toString() === "RIFF" && buf.slice(8, 12).toString() === "WAVE") {
+        return buf.readUInt32LE(24);
+    }
+    return mp3SampleRate(buf);
+}
+
+function isBareAudio(buf) {
+    if (buf.slice(0, 4).toString() === "RIFF") return true;   // WAV không có metadata gapless
+    if (buf.slice(0, 3).toString() === "ID3") return false;
+    if (!(buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0)) return false;
+    const head = buf.slice(0, 4096);
+    return !head.includes(Buffer.from("Xing")) && !head.includes(Buffer.from("Info"));
+}
+
 function mp3SampleRate(buf) {
     let i = 0;
     if (buf.slice(0, 3).toString() === "ID3") {
@@ -179,13 +196,13 @@ if (process.env.ZT_LIVE === "1") {
         // Backend phục vụ MP3 (app.py đặt gr.Audio(format="mp3")). Vẫn chấp nhận
         // WAV để test chạy được với backend chưa đổi, ví dụ HF Space mặc định.
         const buf = Buffer.from(r.data, "base64");
-        const isMp3 = buf.slice(0, 3).toString() === "ID3" ||
-            (buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0);
         const isWav = buf.slice(0, 4).toString() === "RIFF" &&
             buf.slice(8, 12).toString() === "WAVE";
+        const isMp3 = !isWav && (buf.slice(0, 3).toString() === "ID3" ||
+            (buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0));
         check("base64 giải ra audio hợp lệ", isMp3 || isWav,
-            (isMp3 ? "MP3" : isWav ? "WAV" : "KHÔNG NHẬN RA") +
-            ", " + buf.length + " bytes, " + dt + "s");
+            (isWav ? "WAV" : isMp3 ? "MP3" : "KHÔNG NHẬN RA") +
+            " " + audioSampleRate(buf) + "Hz, " + buf.length + " bytes, " + dt + "s");
     }
     // Dòng không có gì để đọc phải trả khoảng lặng, KHÔNG phải lỗi: vBook gặp
     // Response.error là dừng phát cả chương mà không báo gì.
@@ -193,18 +210,22 @@ if (process.env.ZT_LIVE === "1") {
     const blankBuf = blank.ok ? Buffer.from(blank.data, "base64") : null;
     // Phải là khung MP3 trần: thẻ ID3 hay header Xing/Info mang metadata gapless,
     // và đó là thứ khác biệt duy nhất còn lại so với engine chạy được.
-    const blankBare = blank.ok && blankBuf[0] === 0xff && (blankBuf[1] & 0xe0) === 0xe0 &&
-        blankBuf.slice(0, 3).toString() !== "ID3" &&
-        !blankBuf.slice(0, 4096).includes(Buffer.from("Xing")) &&
-        !blankBuf.slice(0, 4096).includes(Buffer.from("Info"));
-    check("dòng rỗng -> khoảng lặng MP3 trần", blankBare === true,
+    check("dòng rỗng -> khoảng lặng, không metadata gapless",
+        blank.ok === true && isBareAudio(blankBuf),
         blank.ok ? blankBuf.length + " bytes" : blank.message);
 
     // Khoảng lặng phải CÙNG sample rate với giọng thật. Lệch thì vBook đọc được
     // một lúc rồi gãy ở câm đầu tiên nó gặp trong hàng phát nối liền.
     if (r.ok && blank.ok) {
-        const speechRate = mp3SampleRate(Buffer.from(r.data, "base64"));
-        const silenceRate = mp3SampleRate(blankBuf);
+        const speechBuf = Buffer.from(r.data, "base64");
+        const speechRate = audioSampleRate(speechBuf);
+        const silenceRate = audioSampleRate(blankBuf);
+        const sameKind =
+            (speechBuf.slice(0, 4).toString() === "RIFF") ===
+            (blankBuf.slice(0, 4).toString() === "RIFF");
+        check("khoảng lặng cùng định dạng với giọng", sameKind,
+            (speechBuf.slice(0, 4).toString() === "RIFF" ? "WAV" : "MP3") + " / " +
+            (blankBuf.slice(0, 4).toString() === "RIFF" ? "WAV" : "MP3"));
         check("khoảng lặng cùng sample rate với giọng",
             speechRate !== null && speechRate === silenceRate,
             "giọng=" + speechRate + "Hz  lặng=" + silenceRate + "Hz");
