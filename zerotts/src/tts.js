@@ -6,8 +6,12 @@ load("voice_list.js");
 // cài đặt extension để dùng Space nhân bản hoặc máy tự host (xem README).
 let BASE_URL = "https://hugging-apps-zerotts-vietnamese-demo.hf.space";
 try {
-    if (ZEROTTS_URL) {
-        BASE_URL = ZEROTTS_URL;
+    // Phải kiểm kiểu, không chỉ kiểm truthy. Có bản app inject config vào đây
+    // dưới dạng không phải chuỗi; gọi .indexOf/.charAt lên nó là ném lỗi ngay
+    // lúc load, mà load lỗi thì execute() không bao giờ tồn tại -> app treo im
+    // lặng, không hiện một chữ lỗi nào. Sai kiểu thì lặng lẽ dùng mặc định.
+    if (typeof ZEROTTS_URL === "string" && ZEROTTS_URL.trim()) {
+        BASE_URL = ZEROTTS_URL.trim();
     }
 } catch (e) {
     // App chưa inject config -> giữ nguyên mặc định.

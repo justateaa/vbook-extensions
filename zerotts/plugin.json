@@ -2,7 +2,7 @@
   "metadata": {
     "name": "ZeroTTS",
     "author": "justateaa",
-    "version": 1,
+    "version": 2,
     "source": "https://huggingface.co/zeroweight-ai/ZeroTTS",
     "description": "Nghe truyện bằng ZeroTTS - TTS tiếng Việt, 8 giọng dựng sẵn",
     "locale": "vi",
@@ -37,36 +37,10 @@
       "mode": "input",
       "format": "number"
     },
-    "preload_size": {
-      "title": "Số câu tải trước",
-      "subtitle": "Mỗi câu là một chuỗi base64 WAV vài trăm KB nằm trong bộ nhớ. Tự host mạnh thì tăng lên",
-      "default": "2",
-      "mode": "input",
-      "format": "number"
-    },
-    "preload_parallel": {
-      "title": "Tải trước song song",
-      "subtitle": "Bật khi tự host. Với Space công khai dễ bị giới hạn tần suất",
-      "default": "false",
-      "mode": "toggle"
-    },
-    "max_length": {
-      "title": "Số ký tự tối đa mỗi lượt",
-      "subtitle": "ZeroTTS trả WAV thô (~94 KB/giây) nên để thấp hơn các engine trả MP3",
-      "default": "120",
-      "mode": "input",
-      "format": "number"
-    },
-    "required_api_key": {
-      "title": "Cần API key",
-      "default": "false",
-      "mode": "toggle"
-    },
-    "support_url": {
-      "title": "Trang hỗ trợ",
-      "default": "https://github.com/justateaa/vbook-extensions/blob/main/zerotts/README.md",
-      "mode": "input",
-      "format": "text"
-    }
+    "preload_size": 2,
+    "preload_parallel": false,
+    "max_length": 120,
+    "required_api_key": false,
+    "support_url": "https://github.com/justateaa/vbook-extensions/blob/main/zerotts/README.md"
   }
 }
