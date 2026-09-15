@@ -9,7 +9,7 @@ services:
     environment:
       ZEROTTS_THREADS: "2"
       ZEROTTS_CONCURRENCY: "3"
-      ZEROTTS_MIN_SEC: "2.0"
+      ZEROTTS_MIN_SEC: "0"
       ZEROTTS_MP3_RATE: "24000"
       ZEROTTS_FORMAT: "mp3"
       ZEROTTS_MIN_RESPONSE_SEC: "0"
@@ -19,10 +19,6 @@ services:
       # Tunnel cấp hostname ngẫu nhiên nên không thể whitelist trước.
       GRADIO_ALLOWED_HOSTS: "*"
     volumes:
-      # Clip đối chứng của Google, mount thẳng để đổi không cần build lại.
-      - ./overrides:/app/overrides:ro
-      - ./overrides.json:/app/overrides.json:ro
-      - ./app.py:/app/app.py:ro
       # Trọng số ~900 MB tải một lần rồi nằm lại đây, rebuild không tải lại.
       - hf-cache:/data/hf
 

@@ -164,8 +164,8 @@ ZeroTTS thẳng trên host thay vì trong container.
 | `ZEROTTS_URL` | Space công khai | Địa chỉ Gradio backend |
 | `ZEROTTS_CFG_SCALE` | `1.0` | 1.0 = tắt; cao hơn bám giọng gốc hơn nhưng dễ méo (1.0–4.0) |
 | `ZEROTTS_TEMPERATURE` | `0.8` | Thấp = đều, cao = giàu biểu cảm nhưng dễ vấp (0.1–1.5) |
-| `preload_size` | `4` | Số câu tổng hợp trước; để cao hơn số worker cho luôn có việc |
-| `preload_parallel` | `true` | **Phải bật**, không thì 3 worker của backend chỉ dùng được 1 |
+| `preload_size` | `3` | Số câu tổng hợp trước; khớp số worker của backend |
+| `preload_parallel` | *(không đặt)* | Để app tự quyết, như google-tts. Đặt `false` bóp 3 worker của backend còn 1 |
 | `max_length` | `120` | Ký tự tối đa mỗi lượt |
 
 ### Timeout: không có gì để chỉnh trong app
@@ -264,8 +264,8 @@ Triệu chứng: vBook phát được vài câu rồi im hẳn, không báo lỗ
   RAM phẳng, tunnel 0 lỗi. Không phải backend.
 - Theo dõi bộ đếm request lúc app im: app vẫn gọi được và backend vẫn trả đủ, nhưng
   không ra tiếng. Lỗi nằm ở khâu phát, không phải khâu lấy dữ liệu.
-- Đối chứng: **Google TTS đọc cùng chương đó bình thường**. Cùng app, cùng máy, cùng
-  chương — chỉ khác engine. Chương vẫn còn nhiều nội dung phía sau chỗ dừng.
+- Đối chứng ban đầu **tưởng** Google TTS đọc cùng chương bình thường. Mãi về sau mới
+  đo thật: Google TTS đứng ở đúng cùng một đoạn. Xem mục về lỗi player bên dưới.
 
 Khác biệt còn lại giữa hai engine là thứ trả về: Google trả MP3 ~40 KB mỗi câu, ZeroTTS
 mặc định trả WAV thô ~245 KB. vBook giữ dữ liệu này dưới dạng chuỗi base64, nên WAV
@@ -310,34 +310,47 @@ trả khoảng lặng rồi đi tiếp.
 Ngưỡng `base64.length` cũng hạ từ 1000 xuống 100: con số cũ viết cho WAV thô, mà MP3
 của một tiếng "Ừ" chỉ 3,7 KB nên suýt bị bắt nhầm là audio rỗng.
 
-## Clip quá ngắn làm gãy player — nguyên nhân gốc của cả lớp lỗi "đọc một lúc rồi dừng"
+## App đứng phát giữa chương — lỗi của vBook, không phải của extension
 
-Ba lần dừng ở ba chỗ khác nhau, đều là clip rất ngắn:
+Triệu chứng: đọc được một lúc rồi im hẳn, không báo lỗi, không tạm dừng. Bấm skip qua
+đúng đoạn đó thì mọi đoạn sau phát bình thường.
 
-| Chỗ dừng | Clip sinh ra | Độ dài |
-|----------|--------------|--------|
-| thoại hai tiếng trong ngoặc kép | 8108 B | ~1,0 s |
-| mẩu câu bị cắt tại dấu ba chấm | ~5036 B | ~0,6 s |
-| dòng tượng thanh có gạch đầu dòng | 4268 B | ~0,5 s |
+**Phép thử quyết định:** cùng chương, cùng máy, đổi engine sang **Google TTS** —
+extension của chính vBook, không dùng chung một dòng code, một máy chủ hay một định
+dạng audio nào với extension này. **Đứng ở đúng cùng một đoạn.**
 
-Câu chạy được ngay trước đó dài 1,4 s. Nên ngưỡng gãy nằm đâu đó trong khoảng
-1,0–1,4 giây. Đổi **Chia nội dung** sang **Theo đoạn** che được phần lớn vì đoạn văn
-thì dài, nhưng một dòng tượng thanh đứng riêng thành đoạn vẫn gãy.
+Trước đó audio đã bị loại trừ riêng: backend được cho trả **đúng byte audio của Google**
+cho chính dòng đang lỗi, xác minh trùng khớp từng byte và xác minh đúng request mang
+User-Agent Android — vẫn đứng.
 
-Đây không phải lỗi theo hình dạng văn bản. Mọi cách vá theo từng dạng chữ đều là đuổi
-theo triệu chứng. Chặn tại hai điểm, một lần:
+Chỗ đứng cố định theo **chỉ số đoạn**, bất kể văn bản, byte audio, độ dài, format hay
+sample rate. Toàn bộ quá trình đo và chứng cứ logcat nằm ở `docs/playback-stall.md`,
+viết để gửi cho tác giả vBook.
 
-**1. Backend đảm bảo độ dài tối thiểu.** `ZEROTTS_MIN_SEC` (mặc định `2.0`) trong
-`docker-compose.yml`. `app.py` chèn im lặng vào cuối cho đủ ngưỡng trước khi encode.
-Không có dạng văn bản nào sinh ra được clip ngắn hơn thế nữa.
+### Những gì từng bị quy kết nhầm
 
-**2. Extension không bao giờ trả `Response.error`.** vBook gặp lỗi TTS là dừng phát cả
-chương mà không hiện thông báo nào, nên một đoạn hỏng giết cả chương. `execute()` giờ
-thử lại một lần, hỏng nữa thì trả khoảng lặng rồi đi tiếp. Mất một câu còn hơn mất cả
-chương; chi tiết lỗi vẫn ghi ra logcat qua `console.log`.
+| Từng kết luận | Thực tế |
+|---|---|
+| Clip ngắn hơn ~1,4 s làm gãy player | Đệm `Ầm` từ 0,48 s lên 2,00 s — vẫn đứng |
+| Đoạn chỉ toàn dấu câu gây lỗi | Máy thật chưa từng gửi đoạn nào như vậy; 20 đoạn đó là traffic test cục bộ |
+| Khoảng lặng zero tuyệt đối làm hỏng | Máy không đi vào nhánh khoảng lặng lần nào |
+| Format / sample rate / metadata MP3 | Đã thử hết, kể cả WAV thô — đứng như nhau |
 
-Khoảng lặng nhúng trong `tts.js` cũng dài 2,0 s và cùng 48 kHz mono 64 kbps với clip
-giọng — nó cũng là một clip đi vào hàng phát, nên chịu đúng ràng buộc đó.
+Hai lần đầu bác bỏ "clip ngắn" đều **không đáng tin**, và chỉ lộ ra khi đọc lại log
+theo `User-Agent`: một lần chạy trước khi có header `X-ZeroTTS-Ext` nên không chứng
+minh được máy đang chạy đúng bản extension, một lần lẫn với traffic của
+`test/shortlines.js` trên cùng container. Bài học đã đưa vào công cụ: `build.py` bắt
+`EXT_VERSION` phải khớp `metadata.version`, và backend log kèm `ext=` với `ua=` ở mỗi
+request để không bao giờ đọc nhầm nguồn nữa.
 
-`test/shortlines.js` chạy 33 dạng dòng ngắn qua `execute()` thật và bắt buộc **cả hai**
-số phải bằng 0: số dòng trả lỗi, và số clip ngắn hơn 1,5 s. Thoát khác 0 nếu vi phạm.
+### Giảm nhẹ
+
+Ít đoạn hơn thì đi xa hơn:
+
+- **Chia nội dung = Theo đoạn** thay vì Theo câu
+- **Độ dài tối đa** đặt cao (300–500)
+
+Đây là giảm nhẹ, không phải sửa. Chương đủ dài thì vẫn chạm ngưỡng.
+
+`ZEROTTS_MIN_SEC` vẫn còn trong `docker-compose.yml` nhưng mặc định `0`: nó được thêm
+cho giả thuyết clip ngắn, và giả thuyết đó đã chết.

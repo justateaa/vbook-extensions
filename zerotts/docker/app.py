@@ -13,7 +13,6 @@ Space runs on cpu-basic — there is no PyTorch/CUDA path to put on a GPU.
 from __future__ import annotations
 
 import logging
-import json
 import os
 import shutil
 import subprocess
@@ -109,44 +108,13 @@ OUT_FORMAT = os.environ.get("ZEROTTS_FORMAT", "mp3").lower()
 # Độ dài khoảng lặng trả về cho dòng không có gì để đọc.
 SILENCE_SEC = float(os.environ.get("ZEROTTS_SILENCE_SEC", "0.6"))
 
-# Thời gian tối thiểu một request phải chiếm trước khi trả về.
+# Thời gian tối thiểu một request phải chiếm trước khi trả về. Mặc định tắt.
 #
-# Khoảng lặng dựng gần như tức thì (~0,13s), trong khi tổng hợp giọng thật mất
-# 0,4-7s. Log cho thấy app đứng hình ngay sau một chùm 4 khoảng lặng trả về cách
-# nhau 0,13s — nhanh gấp nhiều lần mọi thứ khác trong luồng. Google TTS chạy
-# thông trên cùng máy và mỗi lượt gọi của nó mất ~1s vì đi qua mạng, nên nó
-# không bao giờ dồn nhanh như vậy. Hãm nhịp để chùm dồn dập biến mất.
+# Thêm vào cho giả thuyết "khoảng lặng trả về dồn dập làm app sặc"; giả thuyết đó
+# đã chết cùng cả nhóm giả thuyết về audio — xem docs/playback-stall.md.
 MIN_RESPONSE_SEC = float(os.environ.get("ZEROTTS_MIN_RESPONSE_SEC", "0"))
 
-GOOGLE_SILENCE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                   "google_silence.mp3")
 
-
-# PHÉP ĐỐI CHỨNG. Bản đồ text -> file audio do Google TTS sinh ra, phục vụ
-# nguyên byte, bỏ qua ZeroTTS hoàn toàn.
-#
-# Máy thật dừng đúng ở clip cho chữ 'Ầm'. Đã đổi format, sample rate, độ dài,
-# metadata — dừng hết. Nên câu hỏi không còn là "thuộc tính nào sai" mà là
-# "có phải audio không". Google đọc trọn chương này trên chính chiếc máy đó,
-# nên audio của Google cho ĐÚNG dòng đang lỗi là mẫu đối chứng duy nhất tách
-# được hai khả năng:
-#
-#   phát qua được  -> lỗi ở audio ZeroTTS sinh ra, và diff được với file này
-#   vẫn dừng       -> audio không phải nguyên nhân, lỗi ở player; hết đường từ
-#                     phía backend, chuyển sang báo lỗi cho tác giả vBook
-#
-# Đặt ZEROTTS_OVERRIDES=0 để tắt.
-OVERRIDE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "overrides")
-OVERRIDES = {}
-_ovr_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), "overrides.json")
-if os.environ.get("ZEROTTS_OVERRIDES", "1") == "1" and os.path.exists(_ovr_json):
-    with open(_ovr_json, encoding="utf-8") as fh:
-        for _text, _name in json.load(fh).items():
-            _path = os.path.join(OVERRIDE_DIR, _name)
-            if os.path.exists(_path):
-                OVERRIDES[_text.strip()] = _path
-    print(f"[OVERRIDE] nap {len(OVERRIDES)} clip doi chung: {sorted(OVERRIDES)!r}",
-          flush=True)
 
 
 def _pace(t0: float) -> None:
@@ -263,12 +231,6 @@ def synthesize(
 
     text = (text or "").strip()
 
-    _ovr = OVERRIDES.get(text)
-    if _ovr is not None:
-        print(f"[OVR {_req_id}] tra clip Google nguyen ban: {os.path.basename(_ovr)}",
-              flush=True)
-        return _ovr, "clip doi chung cua Google"
-
     if len(text) > MAX_TEXT_CHARS:
         print(f"[ERR {_req_id}] quá dài: {len(text)}", flush=True)
         raise gr.Error(
@@ -289,14 +251,6 @@ def synthesize(
         # toàn-zero — logcat in thẳng "[audioTrackData][zero] ... mMaxAmplitude 0"
         # kèm bộ đếm số giây. App đứng hình ngay sau một cụm 4 khoảng lặng liên
         # tiếp, nên nhiễu ở mức -66 dBFS: máy thấy có tín hiệu, tai không nghe ra.
-        # PHÉP THẾ THẲNG, không phải tinh chỉnh thuộc tính nữa.
-        # Đây đúng là file Google TTS trả về cho ký tự ba chấm — 0,29s, peak
-        # 0,00018 — và Google đọc trọn chương này trên chính chiếc máy đang lỗi.
-        # Cùng byte, cùng nguồn đã chứng minh phát được. Nếu vẫn dừng thì nội
-        # dung file audio dứt khoát không phải nguyên nhân, và mọi biến thể khác
-        # của nó cũng vô ích.
-        return GOOGLE_SILENCE_PATH, "khoảng lặng (clip Google)"
-
         n = int(SILENCE_SEC * SAMPLE_RATE)
         rng = np.random.default_rng(0)
         pcm = rng.integers(-16, 17, size=n, endpoint=False).astype(np.int16)

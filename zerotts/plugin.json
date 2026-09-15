@@ -2,7 +2,7 @@
   "metadata": {
     "name": "ZeroTTS",
     "author": "justateaa",
-    "version": 14,
+    "version": 15,
     "source": "https://huggingface.co/zeroweight-ai/ZeroTTS",
     "description": "Nghe truyện bằng ZeroTTS - TTS tiếng Việt, 8 giọng dựng sẵn",
     "locale": "vi",
@@ -37,8 +37,7 @@
       "mode": "input",
       "format": "number"
     },
-    "preload_size": 2,
-    "preload_parallel": false,
+    "preload_size": 3,
     "max_length": 500,
     "required_api_key": false,
     "support_url": "https://github.com/justateaa/vbook-extensions/blob/main/zerotts/README.md"

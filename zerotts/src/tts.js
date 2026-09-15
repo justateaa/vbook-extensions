@@ -54,7 +54,7 @@ const SILENT_MP3 = "//OExAAkvBYgABmGnRcRCd4VNELMQzxBAggYQIJ3e/tEEyZO3PTv3vfTEHYn
 
 // Phải khớp metadata.version trong plugin.json — build.py kiểm, lệch là dừng.
 // Gửi kèm mỗi request để backend log biết chính xác bản nào đang gọi.
-const EXT_VERSION = "14";
+const EXT_VERSION = "15";
 
 const DEFAULT_VOICE = "maichi";
 const MAX_CHARS = 1000;          // Trần của ô Text trong Gradio app.
