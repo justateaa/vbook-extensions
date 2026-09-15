@@ -65,6 +65,32 @@ function loadExt(config) {
 const DEFAULT_SPACE = "https://hugging-apps-zerotts-vietnamese-demo.hf.space";
 const results = [];
 
+// Đọc sample rate từ frame header MP3 đầu tiên (bỏ qua thẻ ID3 nếu có).
+// Dùng để chốt clip câm nhúng phải cùng thông số với clip giọng backend trả về:
+// lệch sample rate làm hàng phát nối liền của vBook gãy giữa chương.
+const MPEG_RATES = {
+    3: [44100, 48000, 32000],   // MPEG 1
+    2: [22050, 24000, 16000],   // MPEG 2
+    0: [11025, 12000, 8000]     // MPEG 2.5
+};
+
+function mp3SampleRate(buf) {
+    let i = 0;
+    if (buf.slice(0, 3).toString() === "ID3") {
+        // Kích thước thẻ ID3 là 4 byte synchsafe (mỗi byte chỉ dùng 7 bit thấp).
+        i = 10 + ((buf[6] & 0x7f) << 21 | (buf[7] & 0x7f) << 14 |
+                  (buf[8] & 0x7f) << 7 | (buf[9] & 0x7f));
+    }
+    for (; i < buf.length - 4; i++) {
+        if (buf[i] !== 0xff || (buf[i + 1] & 0xe0) !== 0xe0) continue;
+        const version = (buf[i + 1] >> 3) & 0x03;
+        const rateIdx = (buf[i + 2] >> 2) & 0x03;
+        if (rateIdx === 3 || !MPEG_RATES[version]) continue;
+        return MPEG_RATES[version][rateIdx];
+    }
+    return null;
+}
+
 function check(name, cond, extra) {
     results.push((cond ? "PASS" : "FAIL") + "  " + name + (extra ? "  " + extra : ""));
 }
@@ -168,6 +194,16 @@ if (process.env.ZT_LIVE === "1") {
     check("dòng rỗng -> khoảng lặng MP3",
         blank.ok === true && blankBuf.slice(0, 3).toString() === "ID3",
         blank.ok ? blankBuf.length + " bytes" : blank.message);
+
+    // Khoảng lặng phải CÙNG sample rate với giọng thật. Lệch thì vBook đọc được
+    // một lúc rồi gãy ở câm đầu tiên nó gặp trong hàng phát nối liền.
+    if (r.ok && blank.ok) {
+        const speechRate = mp3SampleRate(Buffer.from(r.data, "base64"));
+        const silenceRate = mp3SampleRate(blankBuf);
+        check("khoảng lặng cùng sample rate với giọng",
+            speechRate !== null && speechRate === silenceRate,
+            "giọng=" + speechRate + "Hz  lặng=" + silenceRate + "Hz");
+    }
 
     const punct = sandbox.execute("“……”", "maichi");
     check("dòng toàn dấu câu -> khoảng lặng",

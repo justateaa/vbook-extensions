@@ -63,7 +63,20 @@ const LINES = [
     "“”",
     "()",
     "[]",
-    "   "
+    "   ",
+    // App cắt câu ngay tại dấu ba chấm giữa dòng, nên sinh ra đoạn KẾT THÚC
+    // bằng "…" và đoạn kế BẮT ĐẦU bằng "…", thường kèm ngoặc kép lẻ một bên.
+    "“Thôi được…",
+    "…tôi sẽ đi phía sau”",
+    "…",
+    "…… ",
+    "Ừ…",
+    "…Ừ",
+    "“…”",
+    "-",
+    "—",
+    "1.",
+    "A"
 ];
 
 console.log("execute() trên câu ngắn  ->  " + BASE + "\n");
