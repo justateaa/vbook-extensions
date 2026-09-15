@@ -19,6 +19,10 @@ services:
       # Tunnel cấp hostname ngẫu nhiên nên không thể whitelist trước.
       GRADIO_ALLOWED_HOSTS: "*"
     volumes:
+      # Clip đối chứng của Google, mount thẳng để đổi không cần build lại.
+      - ./overrides:/app/overrides:ro
+      - ./overrides.json:/app/overrides.json:ro
+      - ./app.py:/app/app.py:ro
       # Trọng số ~900 MB tải một lần rồi nằm lại đây, rebuild không tải lại.
       - hf-cache:/data/hf
 
