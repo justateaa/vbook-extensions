@@ -1,0 +1,400 @@
+09-15 10:35:35.318 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:35.381 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1270ms before pts: 0
+09-15 10:35:35.383 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:35.384 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:35.385 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:35.386 D/AudioTrack( 1788): [audioTrackData][zero] 17s(f:0 m:0 s:0 k:0 z:17609) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:35.901 D/AudioTrack( 1788): [audioTrackData][zero] 18s(f:0 m:0 s:0 k:0 z:18124) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:36.597 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:36.621 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1236ms before pts: 0
+09-15 10:35:36.624 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:36.625 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:36.626 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:36.883 D/AudioTrack( 1788): [audioTrackData][zero] 19s(f:0 m:0 s:0 k:0 z:19107) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:37.834 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:37.901 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:35:37.911 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1285ms before pts: 0
+09-15 10:35:37.913 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:37.915 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:37.916 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:37.916 D/AudioTrack( 1788): [audioTrackData][zero] 20s(f:0 m:0 s:0 k:0 z:20140) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:39.116 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:39.142 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1226ms before pts: 0
+09-15 10:35:39.145 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:39.146 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:39.147 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:39.147 D/AudioTrack( 1788): [audioTrackData][zero] 21s(f:0 m:0 s:0 k:0 z:21371) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:39.148 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:39.499 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 10, DQoutput: 10 success out of 10 tries
+09-15 10:35:40.352 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:40.435 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1287ms before pts: 0
+09-15 10:35:40.437 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:40.439 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:40.439 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:40.440 D/AudioTrack( 1788): [audioTrackData][zero] 22s(f:0 m:0 s:0 k:0 z:22664) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:40.755 D/MediaCodec(32065): CreateByType: pid -1(32065)
+09-15 10:35:40.755 D/MediaCodec(32065): CreateByType: mime audio/raw, encoder 0 pid -1
+09-15 10:35:40.848 D/CCodecBufferChannel(32065): [c2.android.raw.decoder#747] input EOS
+09-15 10:35:40.852 I/MediaCodec(32065): [mId: 25] [audio-debug-dec] Render: 0, Drop: 10, DQoutput: 10 success out of 11 tries
+09-15 10:35:40.854 I/MediaCodec(32065): [mId: 25] [audio-debug-dec] setState: RELEASING
+09-15 10:35:40.953 D/AudioTrack( 1788): [audioTrackData][zero] 23s(f:0 m:0 s:0 k:0 z:23176) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:41.631 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:41.658 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1219ms before pts: 0
+09-15 10:35:41.660 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:41.662 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:41.663 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:41.920 D/AudioTrack( 1788): [audioTrackData][zero] 24s(f:0 m:0 s:0 k:0 z:24143) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:42.869 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:42.936 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:35:42.945 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1283ms before pts: 0
+09-15 10:35:42.948 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:42.949 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:42.950 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:42.950 D/AudioTrack( 1788): [audioTrackData][zero] 25s(f:0 m:0 s:0 k:0 z:25173) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:44.150 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:44.175 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1225ms before pts: 0
+09-15 10:35:44.178 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:44.179 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:44.180 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:44.181 D/AudioTrack( 1788): [audioTrackData][zero] 26s(f:0 m:0 s:0 k:0 z:26404) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:45.387 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:45.467 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1287ms before pts: 0
+09-15 10:35:45.469 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:45.471 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:45.471 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:45.472 D/AudioTrack( 1788): [audioTrackData][zero] 27s(f:0 m:0 s:0 k:0 z:27695) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:45.986 D/AudioTrack( 1788): [audioTrackData][zero] 28s(f:0 m:0 s:0 k:0 z:28209) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:46.669 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:46.692 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1220ms before pts: 0
+09-15 10:35:46.695 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:46.696 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:46.697 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:46.698 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:46.955 D/AudioTrack( 1788): [audioTrackData][zero] 29s(f:0 m:0 s:0 k:0 z:29179) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:47.499 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 11, DQoutput: 11 success out of 11 tries
+09-15 10:35:47.904 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:47.974 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:35:47.984 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1286ms before pts: 0
+09-15 10:35:47.987 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:47.989 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:47.990 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:47.991 D/AudioTrack( 1788): [audioTrackData][zero] 30s(f:0 m:0 s:0 k:0 z:30214) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:49.183 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:49.210 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1220ms before pts: 0
+09-15 10:35:49.213 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:49.215 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:49.216 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:49.216 D/AudioTrack( 1788): [audioTrackData][zero] 31s(f:0 m:0 s:0 k:0 z:31440) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:49.217 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:50.421 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:50.498 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1281ms before pts: 0
+09-15 10:35:50.502 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:50.505 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:50.505 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:50.506 D/AudioTrack( 1788): [audioTrackData][zero] 32s(f:0 m:0 s:0 k:0 z:32729) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:50.506 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:51.020 D/AudioTrack( 1788): [audioTrackData][zero] 33s(f:0 m:0 s:0 k:0 z:33243) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:51.702 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:51.728 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1222ms before pts: 0
+09-15 10:35:51.730 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:51.731 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:51.732 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:51.989 D/AudioTrack( 1788): [audioTrackData][zero] 34s(f:0 m:0 s:0 k:0 z:34213) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:52.939 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:53.009 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:35:53.019 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1287ms before pts: 0
+09-15 10:35:53.021 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:53.023 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:53.023 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:53.024 D/AudioTrack( 1788): [audioTrackData][zero] 35s(f:0 m:0 s:0 k:0 z:35247) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:53.503 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 22, DQoutput: 22 success out of 22 tries
+09-15 10:35:54.218 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:54.243 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1220ms before pts: 0
+09-15 10:35:54.246 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:54.248 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:54.248 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:54.249 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:54.249 D/AudioTrack( 1788): [audioTrackData][zero] 36s(f:0 m:0 s:0 k:0 z:36472) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:55.455 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:55.537 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1288ms before pts: 0
+09-15 10:35:55.540 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:55.541 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:55.542 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:55.542 D/AudioTrack( 1788): [audioTrackData][zero] 37s(f:0 m:0 s:0 k:0 z:37766) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:55.802 D/AudioTrack( 1788): [audioTrackData][zero] 38s(f:0 m:0 s:0 k:0 z:38025) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:56.737 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:56.762 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1220ms before pts: 0
+09-15 10:35:56.765 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:56.767 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:56.768 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:56.769 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:57.026 D/AudioTrack( 1788): [audioTrackData][zero] 39s(f:0 m:0 s:0 k:0 z:39249) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:57.973 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:58.047 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:35:58.057 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1288ms before pts: 0
+09-15 10:35:58.060 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:58.062 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:58.063 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:58.064 D/AudioTrack( 1788): [audioTrackData][zero] 40s(f:0 m:0 s:0 k:0 z:40288) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:59.253 D/NuPlayer( 1788): reached audio EOS
+09-15 10:35:59.276 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1213ms before pts: 0
+09-15 10:35:59.280 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:35:59.281 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:59.282 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:59.283 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:35:59.283 D/AudioTrack( 1788): [audioTrackData][zero] 41s(f:0 m:0 s:0 k:0 z:41506) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:35:59.575 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 11, DQoutput: 11 success out of 11 tries
+09-15 10:35:59.796 D/AudioTrack( 1788): [audioTrackData][zero] 42s(f:0 m:0 s:0 k:0 z:42019) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:00.490 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:00.584 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1301ms before pts: 0
+09-15 10:36:00.587 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:00.590 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:00.591 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:00.593 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:00.850 D/AudioTrack( 1788): [audioTrackData][zero] 43s(f:0 m:0 s:0 k:0 z:43073) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:01.770 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:01.800 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1208ms before pts: 0
+09-15 10:36:01.803 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:01.806 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:01.807 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:01.808 D/AudioTrack( 1788): [audioTrackData][zero] 44s(f:0 m:0 s:0 k:0 z:44031) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:03.009 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:03.120 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:03.132 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1325ms before pts: 0
+09-15 10:36:03.138 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:03.140 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:03.141 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:03.142 D/AudioTrack( 1788): [audioTrackData][zero] 45s(f:0 m:0 s:0 k:0 z:45365) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:03.142 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:04.330 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:04.358 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1216ms before pts: 0
+09-15 10:36:04.361 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:04.363 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:04.364 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:04.364 D/AudioTrack( 1788): [audioTrackData][zero] 46s(f:0 m:0 s:0 k:0 z:46588) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:04.878 D/AudioTrack( 1788): [audioTrackData][zero] 47s(f:0 m:0 s:0 k:0 z:47101) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:05.569 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:05.667 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 22, DQoutput: 22 success out of 22 tries
+09-15 10:36:05.690 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1326ms before pts: 0
+09-15 10:36:05.693 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:05.695 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:05.696 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:05.697 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:05.953 D/AudioTrack( 1788): [audioTrackData][zero] 48s(f:0 m:0 s:0 k:0 z:48176) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:06.890 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:06.917 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1220ms before pts: 0
+09-15 10:36:06.920 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:06.923 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:06.924 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:06.924 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:06.925 D/AudioTrack( 1788): [audioTrackData][zero] 49s(f:0 m:0 s:0 k:0 z:49148) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:08.130 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:08.223 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:08.236 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1312ms before pts: 0
+09-15 10:36:08.239 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:08.241 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:08.242 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:08.243 D/AudioTrack( 1788): [audioTrackData][zero] 50s(f:0 m:0 s:0 k:0 z:50466) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:09.450 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:09.535 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1293ms before pts: 0
+09-15 10:36:09.538 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:09.540 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:09.542 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:09.543 D/AudioTrack( 1788): [audioTrackData][zero] 51s(f:0 m:0 s:0 k:0 z:51767) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:09.800 D/AudioTrack( 1788): [audioTrackData][zero] 52s(f:0 m:0 s:0 k:0 z:52023) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:10.730 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:10.758 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1217ms before pts: 0
+09-15 10:36:10.762 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:10.764 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:10.765 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:11.023 D/AudioTrack( 1788): [audioTrackData][zero] 53s(f:0 m:0 s:0 k:0 z:53246) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:11.732 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 22, DQoutput: 22 success out of 22 tries
+09-15 10:36:11.971 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:12.095 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1330ms before pts: 0
+09-15 10:36:12.099 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:12.101 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:12.103 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:12.104 D/AudioTrack( 1788): [audioTrackData][zero] 54s(f:0 m:0 s:0 k:0 z:54327) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:13.292 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:13.312 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:13.324 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1221ms before pts: 0
+09-15 10:36:13.327 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:13.328 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:13.329 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:13.330 D/AudioTrack( 1788): [audioTrackData][zero] 55s(f:0 m:0 s:0 k:0 z:55553) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:13.845 D/AudioTrack( 1788): [audioTrackData][zero] 56s(f:0 m:0 s:0 k:0 z:56068) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:14.528 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:14.619 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1290ms before pts: 0
+09-15 10:36:14.623 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:14.624 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:14.626 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:14.627 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:14.883 D/AudioTrack( 1788): [audioTrackData][zero] 57s(f:0 m:0 s:0 k:0 z:57106) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:15.809 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:15.839 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1212ms before pts: 0
+09-15 10:36:15.841 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:15.843 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:15.844 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:15.845 D/AudioTrack( 1788): [audioTrackData][zero] 58s(f:0 m:0 s:0 k:0 z:58068) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:17.046 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:17.112 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1268ms before pts: 0
+09-15 10:36:17.116 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:17.118 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:17.119 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:17.120 D/AudioTrack( 1788): [audioTrackData][zero] 59s(f:0 m:0 s:0 k:0 z:59343) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:17.120 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:17.784 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 22, DQoutput: 22 success out of 22 tries
+09-15 10:36:18.327 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:18.345 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:18.356 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1237ms before pts: 0
+09-15 10:36:18.359 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:18.361 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:18.362 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:18.362 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:18.363 D/AudioTrack( 1788): [audioTrackData] isLongTimeZeroData out of time 60S 585mS , no related active track
+09-15 10:36:19.565 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:19.657 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1295ms before pts: 0
+09-15 10:36:19.660 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:19.662 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:19.663 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:19.664 D/AudioTrack( 1788): [audioTrackData][zero] 1s(f:0 m:0 s:0 k:0 z:1302) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:20.845 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:20.871 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1208ms before pts: 0
+09-15 10:36:20.875 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:20.877 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:20.878 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:20.879 D/AudioTrack( 1788): [audioTrackData][zero] 2s(f:0 m:0 s:0 k:0 z:2517) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:20.880 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:21.391 D/AudioTrack( 1788): [audioTrackData][zero] 3s(f:0 m:0 s:0 k:0 z:3029) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:22.081 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:22.178 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1299ms before pts: 0
+09-15 10:36:22.182 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:22.184 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:22.185 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:22.186 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:22.443 D/AudioTrack( 1788): [audioTrackData][zero] 4s(f:0 m:0 s:0 k:0 z:4081) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:23.362 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:23.382 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:23.396 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1210ms before pts: 0
+09-15 10:36:23.399 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:23.402 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:23.403 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:23.404 D/AudioTrack( 1788): [audioTrackData][zero] 5s(f:0 m:0 s:0 k:0 z:5042) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:24.018 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 22, DQoutput: 22 success out of 22 tries
+09-15 10:36:24.598 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:24.720 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1317ms before pts: 0
+09-15 10:36:24.723 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:24.724 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:24.725 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:24.726 D/AudioTrack( 1788): [audioTrackData][zero] 6s(f:0 m:0 s:0 k:0 z:6364) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:24.726 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:25.921 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:25.944 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1219ms before pts: 0
+09-15 10:36:25.947 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:25.949 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:25.950 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:25.951 D/AudioTrack( 1788): [audioTrackData][zero] 7s(f:0 m:0 s:0 k:0 z:7589) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:26.464 D/AudioTrack( 1788): [audioTrackData][zero] 8s(f:0 m:0 s:0 k:0 z:8102) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:27.159 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:27.244 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1294ms before pts: 0
+09-15 10:36:27.249 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:27.250 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:27.252 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:27.253 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:27.509 D/AudioTrack( 1788): [audioTrackData][zero] 9s(f:0 m:0 s:0 k:0 z:9147) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:28.438 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:28.455 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:28.467 W/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1214ms before pts: 0
+09-15 10:36:28.469 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] input EOS
+09-15 10:36:28.471 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:28.473 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#335] buffers after EOS ignored (0 us)
+09-15 10:36:28.473 D/AudioTrack( 1788): [audioTrackData][zero] 10s(f:0 m:0 s:0 k:0 z:10112) : pid 32065 uid 11000 sessionId 525857 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:29.568 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 11, DQoutput: 11 success out of 11 tries
+09-15 10:36:29.575 I/MediaCodec( 1788): [mId: 10628] [audio-debug-dec] setState: RELEASING
+09-15 10:36:30.954 D/MediaCodec( 1788): CreateByType: mime audio/raw, encoder 0 pid 32065
+09-15 10:36:30.990 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:30.991 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:30.991 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:32.177 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:32.194 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1203ms before pts: 0
+09-15 10:36:32.195 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:32.196 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:32.196 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:32.197 D/AudioTrack( 1788): [audioTrackData][zero] 1s(f:0 m:0 s:0 k:0 z:1155) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:33.415 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:33.541 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1345ms before pts: 0
+09-15 10:36:33.544 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:33.546 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:33.547 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:33.548 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:33.548 D/AudioTrack( 1788): [audioTrackData][zero] 2s(f:0 m:0 s:0 k:0 z:2506) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:34.060 D/AudioTrack( 1788): [audioTrackData][zero] 3s(f:0 m:0 s:0 k:0 z:3018) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:34.585 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 275, DQoutput: 275 success out of 275 tries
+09-15 10:36:34.738 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:34.763 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1215ms before pts: 0
+09-15 10:36:34.765 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:34.772 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:34.775 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:35.288 D/AudioTrack( 1788): [audioTrackData][zero] 4s(f:0 m:0 s:0 k:0 z:4246) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:35.975 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:36.050 I/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:36.059 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1285ms before pts: 0
+09-15 10:36:36.061 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:36.063 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:36.064 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:36.067 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:36.067 D/AudioTrack( 1788): [audioTrackData][zero] 5s(f:0 m:0 s:0 k:0 z:5025) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:36.219 D/MediaCodec(32065): CreateByType: pid -1(32065)
+09-15 10:36:36.219 D/MediaCodec(32065): CreateByType: mime audio/raw, encoder 0 pid -1
+09-15 10:36:36.273 D/CCodecBufferChannel(32065): [c2.android.raw.decoder#407] input EOS
+09-15 10:36:36.276 I/MediaCodec(32065): [mId: 26] [audio-debug-dec] Render: 0, Drop: 7, DQoutput: 7 success out of 8 tries
+09-15 10:36:36.281 I/MediaCodec(32065): [mId: 26] [audio-debug-dec] setState: RELEASING
+09-15 10:36:37.255 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:37.287 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1221ms before pts: 0
+09-15 10:36:37.292 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:37.295 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:37.296 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:37.297 D/AudioTrack( 1788): [audioTrackData][zero] 6s(f:0 m:0 s:0 k:0 z:6255) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:37.299 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:38.495 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:38.566 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1268ms before pts: 0
+09-15 10:36:38.568 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:38.569 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:38.570 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:38.571 D/AudioTrack( 1788): [audioTrackData][zero] 7s(f:0 m:0 s:0 k:0 z:7529) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:39.084 D/AudioTrack( 1788): [audioTrackData][zero] 8s(f:0 m:0 s:0 k:0 z:8042) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:39.597 I/MediaCodec( 5220): [mId: 0] [video-debug-enc] Render: 0, Drop: 116, DQoutput: 116 success out of 116 tries
+09-15 10:36:39.774 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:39.806 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1236ms before pts: 0
+09-15 10:36:39.809 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:39.811 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:39.812 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:39.984 D/MediaCodec(32065): CreateByType: pid -1(32065)
+09-15 10:36:39.984 D/MediaCodec(32065): CreateByType: mime audio/raw, encoder 0 pid -1
+09-15 10:36:40.054 D/CCodecBufferChannel(32065): [c2.android.raw.decoder#118] input EOS
+09-15 10:36:40.061 I/MediaCodec(32065): [mId: 27] [audio-debug-dec] Render: 0, Drop: 4, DQoutput: 4 success out of 5 tries
+09-15 10:36:40.064 I/MediaCodec(32065): [mId: 27] [audio-debug-dec] setState: RELEASING
+09-15 10:36:40.069 D/AudioTrack( 1788): [audioTrackData][zero] 9s(f:0 m:0 s:0 k:0 z:9027) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:41.010 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:41.077 I/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] Render: 0, Drop: 8, DQoutput: 0 success out of 0 tries
+09-15 10:36:41.093 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1281ms before pts: 0
+09-15 10:36:41.096 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:41.101 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:41.107 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:41.108 D/AudioTrack( 1788): [audioTrackData][zero] 10s(f:0 m:0 s:0 k:0 z:10067) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:42.290 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:42.329 W/MediaCodec( 1788): [mId: 10629] [audio-debug-dec] queueInputBuffer: Input time interval reaches 1222ms before pts: 0
+09-15 10:36:42.332 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] input EOS
+09-15 10:36:42.336 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:42.337 D/CCodecBufferChannel( 1788): [c2.android.raw.decoder#187] buffers after EOS ignored (0 us)
+09-15 10:36:42.338 D/AudioTrack( 1788): [audioTrackData][zero] 11s(f:0 m:0 s:0 k:0 z:11296) : pid 32065 uid 11000 sessionId 525881 sr 8000 ch 1 fmt 1  mMaxAmplitude 0
+09-15 10:36:42.643 D/MediaCodec(32065): CreateByType: pid -1(32065)
+09-15 10:36:42.643 D/MediaCodec(32065): CreateByType: mime audio/raw, encoder 0 pid -1
+09-15 10:36:42.713 D/CCodecBufferChannel(32065): [c2.android.raw.decoder#599] input EOS
+09-15 10:36:42.715 I/MediaCodec(32065): [mId: 28] [audio-debug-dec] Render: 0, Drop: 6, DQoutput: 6 success out of 7 tries
+09-15 10:36:42.718 I/MediaCodec(32065): [mId: 28] [audio-debug-dec] setState: RELEASING
+09-15 10:36:43.527 D/NuPlayer( 1788): reached audio EOS
+09-15 10:36:43.540 D/MediaCodec(32065): CreateByType: pid -1(32065)
+09-15 10:36:43.540 D/MediaCodec(32065): CreateByType: mime audio/raw, encoder 0 pid -1
+09-15 10:36:43.598 D/CCodecBufferChannel(32065): [c2.android.raw.decoder#770] input EOS
+09-15 10:36:43.600 I/MediaCodec(32065): [mId: 29] [audio-debug-dec] Render: 0, Drop: 7, DQoutput: 7 success out of 8 tries
